@@ -1,0 +1,146 @@
+# def-file snel_installer     general version 2.0
+
+# This file contains installation-information:
+# your-config-name			conf-version A.0
+# put specific config-comment below general section
+
+# planned adaptations:
+# -none
+
+# Format of the installation-definition-file (def-file):
+# it contains multiple blocks with specific tasks.
+# A separator-string divides the blocks.
+# Each block starts with capital letters.
+# see below for possible arguments.
+
+
+# DIRECTORIES TO CREATE
+# your-comment-here
+# arguments---none
+# -list all the directories to be created with full paths,
+# but home-dir sign (~) is filled in automatically
+# (all subdirs must be created separately; 
+# if dirs allready exist the creation is skipped)
+#>----------------------------------<
+# TARGET-LOCATION AND SOURCE-FILES TO COPY
+# your-comment-here
+# arguments---none
+# target-location-path
+# all source-files to be copied to the above target-location
+#>----------------------------------<
+# TARGET-LOCATION AND SOURCE-FILES TO COPY
+# your-comment-here
+# arguments---none
+# and so many as neccessary
+#>----------------------------------<
+# EDIT FILE (ADD, DELETE, REPLACE LINES)
+# your-comment-here
+# arguments---none
+# file-path to the file to edit
+# search-direction: forward or backward
+# occurence of string (1-based number)
+# search-string = locating-string (place where to put the commands)
+# relative position to search-string = locating-method (before or after)
+# text-lines (commands) to insert
+# end-of-new-lines-here (fixed string so that installer knows the end)
+#>----------------------------------<
+# EDIT FILE (ADD, DELETE, REPLACE LINES)
+# your-comment-here
+# arguments---none
+# and so many as neccessary
+#>----------------------------------<
+# EXECUTE SHELL-COMMANDS - IN ORDER
+# your-comment-here
+# arguments---none
+# my command1
+# my command2
+#>----------------------------------<
+
+# ===========================================
+# currently supported arguments: 
+# for block: TARGET-LOCATION AND SOURCE-FILES TO COPY
+# linux_set_exe=1			enable executable bits for executable files in linux
+# linux_use_sudo=1			use linux-admin rights (but then call also like: sudo snel_installer)
+
+# ====================================================
+# config-specific remarks:
+# this is a test-config. You need some dummy files
+# to be copied. 
+# 6 source-files
+# 1 config-file: some_config.txt
+# ===================================================
+
+
+DIRECTORIES TO CREATE
+your-comment-here
+arguments---none
+~/testing/testdoel1
+~/testing/testdoel2
+~/testing/testdoel3
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+your-comment-here
+arguments---none
+~/testing/testdoel1
+sourcefile01
+sourcefile02
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+your-comment-here
+arguments---linux_set_exe=1
+~/testing/testdoel2
+sourcefile03
+sourcefile04
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+your-comment-here
+arguments---none
+~/testing/testdoel3
+sourcefile05
+sourcefile06
+>----------------------------------<
+EDIT FILE (ADD, DELETE, REPLACE LINES)
+your-comment-here
+arguments---none
+insertions
+some_config.txt
+forward
+1
+the search-string
+after
+command1
+
+command2
+end-of-edit-block-here
+>----------------------------------<
+disable_EDIT FILE (ADD, DELETE, REPLACE LINES)
+Delete 3 lines after the search-string.
+arguments---none
+deletions
+some_config.txt
+forward
+1
+the search-string
+after
+3
+end-of-edit-block-here
+>----------------------------------<
+disable_EDIT FILE (ADD, DELETE, REPLACE LINES)
+with replacement line-orientation must be: on
+arguments---none
+replacement
+some_config.txt
+forward
+1
+the search-string
+on
+oldtext
+newtext
+end-of-edit-block-here
+>----------------------------------<
+EXECUTE SHELL-COMMANDS - IN ORDER
+your-comment-here
+arguments---none
+pwd
+>----------------------------------<
+#END-OF-BLOCKS

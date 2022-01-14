@@ -1,0 +1,101 @@
+Manual of Snel_installer - version 2.0
+
+FAQ
+Does snel-installer overwrite pre-existing folders and files?
+
+
+
+Format of the installation-definition-file (def-file):
+it contains multiple blocks with specific tasks.
+A separator-string divides the blocks.
+Each block-header is a specific string written in
+capital letters. This header-string determines the 
+handling of the block.
+
+The lines after the block-header contain the actual 
+install-data. The order of line-numbers is relevant to
+how they are handled by the installer.
+(a future-version may be name-based instead of 
+order-based).
+
+The first line after the header is allways a 
+comment-line and should tell what the block does.
+
+The second line is allways an arguments-line in which additional 
+arguments can be added with a format:
+arguments---arg1=value1,,arg2=value2
+
+Currently supported arguments (second line of each block): 
+for block: TARGET-LOCATION AND SOURCE-FILES TO COPY
+linux_set_exe=1			enable executable bits for executable files in linux
+linux_use_sudo=1		use linux-admin rights (but then call also like: sudo snel_installer)
+
+
+The block "EDIT FILE (ADD, DELETE, REPLACE LINES)" has three possible
+operations: inserting lines, deleting lines and replacing a single line.
+The operations are performed on one or more lines that are located by 
+the variables target-file, search-direction, occurrence, locating-string and 
+line-orientation (before, after or on). The latter indicates the orientation
+of the operation relative to the located line.
+The insertions-operation can also add empty lines. The 
+replacement-operation can only work ON the located line. The line that is 
+searched is unique together the occurrence of the 
+search-string. For the locating of the search-needy sentence it is 
+possible to use a (unique) front-part of the sentence as search-string.
+(instead of the entire sentence).
+If your search-config is faulty and does not deliver a 
+located line, SI will give you an error. (e.g. if you ask for the 4th
+occurence of a search-string and there are only two occurrences.)
+
+Below is a description of the definition which explains how 
+to fill in the lines and what the installer expects.
+
+The last block is EXECUTE SHELL-COMMANDS.
+Any arbitrary linux-command can be executed here.
+
+
+DIRECTORIES TO CREATE
+your-comment-here
+arguments---none (default is none, above you see available args)
+-list all the directories to be created with full paths,
+but home-dir sign (~) is filled in automatically
+(all subdirs must be created separately; 
+if dirs allready exist the creation is skipped)
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+your-comment-here
+arguments---none
+target-location-path
+all source-files to be copied to the above target-location
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+your-comment-here
+arguments---none
+and so many as neccessary
+>----------------------------------<
+EDIT FILE (ADD, DELETE, REPLACE LINES)
+your-comment-here
+arguments---none
+operation; pick from: insertions, deletions or replacement
+file-path to the file to edit
+search-direction: forward or backward
+occurence of string (1-based number)
+search-string = locating-string (place where to put the commands)
+relative position to search-string = line-orientation (before, on, after)
+Depending of above chosen operation, do one of the following:
+Then for insertions place here multiple text-lines (commands) you want to insert.
+For deletions the number of lines you want to delete. (on, after or before)
+For replacement the string to-replace, and the to replace-to.
+end-of-new-lines-here (fixed string so that installer knows the end)
+>----------------------------------<
+EDIT FILE (ADD, DELETE, REPLACE LINES)
+your-comment-here
+arguments---none
+and so many as neccessary
+>----------------------------------<
+EXECUTE SHELL-COMMANDS - IN ORDER
+your-comment-here
+arguments---none
+my command1
+my command2
+>----------------------------------<
