@@ -2,7 +2,7 @@ Manual of Snel_installer - version 2.0
 
 FAQ
 Does snel-installer overwrite pre-existing folders and files?
-
+To be tested...
 
 
 Format of the installation-definition-file (def-file):
