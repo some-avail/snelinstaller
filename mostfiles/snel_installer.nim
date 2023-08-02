@@ -63,7 +63,7 @@
 #=============================================
 
 
-var versionfl:float = 2.0
+var versionfl:float = 2.01
 var def_filenamest: string = "install-definition-si.txt"
 
 import os
@@ -222,7 +222,7 @@ if open(myfile, def_filenamest):    # try to open the def-file
   except IOError:
     echo "IO error!"
   
-  except RangeError:
+  except RangeDefect:
     echo "\p\p+++++++ search-config not found +++++++++++\p"
     echo "You have probably entered a search-config that could not be found. \p" &
         "Re-examine you search-config. \p" &

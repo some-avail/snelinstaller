@@ -12,34 +12,8 @@
 import strutils
 import os
 
-var versionfl:float = 1.1
+var versionfl:float = 1.2
 
-
-
-proc old_searchNthSubInString(stringst,subst:string,occurit:int, 
-            directionst:string = "forward"): int =
-
-  # UNIT INFO
-  # search forward or backward for the occurence of a substring 
-  # in a string and return its position (starting from 0)
-
-  var positionit:int = 0
-  var startna:Natural = 0
-  var lastna: Natural = len(stringst)
-  
-  for passit in 1..occurit:
-  
-    if directionst == "forward":
-      positionit = find(stringst, subst, startna)
-    elif directionst == "backward":
-      positionit = rfind(stringst, subst, 0, lastna)
-
-    if positionit >= 0:
-      startna = positionit + 1
-      lastna = positionit - 1
-    elif positionit == -1:
-      return -1
-  return positionit
 
 
 proc searchNthSubInString(stringst,subst:string,occurit:int, 
@@ -129,12 +103,13 @@ proc insertTextInFile*(targetfilepathst, locating_methodst,
     backupfile: File
     backupfilepathst: string
     positionit: int
-    filets: TaintedString
+    # filets: TaintedString
+    filets: string
     filecontentst:string
     insertionpointit:int
   
   # quit if file non-existant
-  if not existsFile(targetfilepathst):
+  if not fileExists(targetfilepathst):
     echo "\pFollowing file does not exist: " & targetfilepathst
     echo "Exiting function insertTextInFile..."
     quit(QuitSuccess)
@@ -207,12 +182,13 @@ proc alterTextFile*(operationst, targetfilepathst, locating_stringst:string,
     backupfile: File
     backupfilepathst: string
     positionit: int
-    filets: TaintedString
+    # filets: TaintedString
+    filets: string
     filecontentst:string
     insertionpointit:int
   
   # quit if file non-existant
-  if not existsFile(targetfilepathst):
+  if not fileExists(targetfilepathst):
     echo "\pFollowing file does not exist: " & targetfilepathst
     echo "Exiting function insertTextInFile..."
     quit(QuitSuccess)
@@ -282,7 +258,7 @@ proc alterTextFile*(operationst, targetfilepathst, locating_stringst:string,
               1, "backward", positionit) + 1      
       endposit = searchNthSubInString(filecontentst, "\p",
             numberoflinesit, "forward", positionit)
-      filecontentst.delete(startposit, endposit)
+      filecontentst.delete(startposit..endposit)
       
     of "after":
       #echo "orient = after"
@@ -292,7 +268,7 @@ proc alterTextFile*(operationst, targetfilepathst, locating_stringst:string,
       endposit = searchNthSubInString(filecontentst, "\p",
             numberoflinesit + 1, "forward", positionit)
       echo "endposit = " & $endposit
-      filecontentst.delete(startposit, endposit)
+      filecontentst.delete(startposit..endposit)
       
     of "before":
       #echo "orient = before"
@@ -300,7 +276,7 @@ proc alterTextFile*(operationst, targetfilepathst, locating_stringst:string,
               1, "backward", positionit)
       startposit = searchNthSubInString(filecontentst, "\p",
             numberoflinesit + 1, "backward", positionit) + 1
-      filecontentst.delete(startposit, endposit)
+      filecontentst.delete(startposit..endposit)
 
 
   of "replacement":
@@ -325,7 +301,7 @@ proc alterTextFile*(operationst, targetfilepathst, locating_stringst:string,
     currentlinest = filecontentst[startposit .. endposit]
     #echo "currentlinest = " & currentlinest
     # delete the current line
-    filecontentst.delete(startposit, endposit)
+    filecontentst.delete(startposit..endposit)
     #echo "to-repl =" & to_replacest
     #echo "rep-to =" & replace_tost
     # replace the current line
