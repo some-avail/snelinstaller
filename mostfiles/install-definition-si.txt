@@ -34,8 +34,8 @@ TARGET-LOCATION AND SOURCE-FILES TO COPY
 your-comment-here
 arguments---linux_set_exe=1
 ~/testing/testdoel2
-sourcefile03
-sourcefile04
+installables/sourcefile03
+installables/sourcefile04
 >----------------------------------<
 TARGET-LOCATION AND SOURCE-FILES TO COPY
 your-comment-here

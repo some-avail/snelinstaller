@@ -76,10 +76,15 @@ proc getValueFromKey*(allargsq:seq[string], separatorst, keyst:string): string =
   # UNIT INFO
   # Retrieve a value from a key-value-sequence based on key and
   # separator
-  var ikeyst, ivaluest:string
+  var 
+    ikeyst, ivaluest:string
+    key_valsq: seq[string]
   
   for item in allargsq:
-    (ikeyst,ivaluest) = item.split(separatorst)
+    # (ikeyst,ivaluest) = item.split(separatorst)
+    key_valsq = item.split(separatorst)
+    ikeyst = key_valsq[0]
+    ivaluest = key_valsq[1]
     if ikeyst == keyst:
       return ivaluest
   
@@ -315,7 +320,14 @@ proc alterTextFile*(operationst, targetfilepathst, locating_stringst:string,
   
   writeFile(targetfilepathst, filecontentst)
 
+
 echo "jo_file_ops " & $(versionfl) & " is called..."     
+
+
+when isMainModule:
+  # pass
+
+  echo getValueFromKey(@["jan-pieters", "wim-jansen"], "-", "janus")
 
 # test searchNthSubInString
 #var posit : int = 0
