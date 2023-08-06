@@ -63,10 +63,11 @@
 #=============================================
 
 
-var versionfl:float = 2.02
+var versionfl:float = 2.1
 
 
-import std/[os, strutils, parseopt, paths]
+# import std/[os, strutils, parseopt, paths]
+import std/[os, strutils, parseopt]
 import jo_file_ops
 
 
@@ -119,6 +120,8 @@ proc installFromDef(install_def_filest: string, first_callbo: bool = true): bool
     blockseparatorst = ">----------------------------------<"
     targetdirpathst: string
     targetfilepathst: string
+    sourcedirpathst: string
+    sourcefilepathst: string
     sourcefilest: string
     editfileprops:array[6,string]
     ops_paramsq:seq[string] = @[]
@@ -165,8 +168,8 @@ proc installFromDef(install_def_filest: string, first_callbo: bool = true): bool
             elif blockphasest == "TARGET-LOCATION AND SOURCE-FILES TO COPY":
               if blocklineit == 1:  # comment-line
                 discard
-              elif blocklineit == 2:
-                # handle arguments
+
+              elif blocklineit == 2:    # handle arguments
                 if line != "arguments---none":
                   all_argst = line.split("---")[1]
                   argumentsq = all_argst.split(",,")
@@ -180,11 +183,14 @@ proc installFromDef(install_def_filest: string, first_callbo: bool = true): bool
 
               elif blocklineit == 3:
                 targetdirpathst = expandTilde(line)
+              elif blocklineit == 4:
+                sourcedirpathst = expandTilde(line)
               else:
-                sourcefilest = expandTilde(line)
-                echo "copying: " & sourcefilest & "   to:   " & targetdirpathst
-                targetfilepathst = joinPath(targetdirpathst,extractFilename(sourcefilest))
-                copyfile(sourcefilest,targetfilepathst)
+                sourcefilest = line
+                sourcefilepathst = joinPath(sourcedirpathst, sourcefilest)                
+                echo "copying: " & sourcefilepathst & "   to:   " & targetdirpathst
+                targetfilepathst = joinPath(targetdirpathst, sourcefilest)
+                copyfile(sourcefilepathst,targetfilepathst)
                 if linux_setexe:
                   var prependst:string = ""
                   if linux_use_sudo: prependst = "sudo "

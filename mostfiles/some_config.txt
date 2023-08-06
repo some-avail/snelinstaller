@@ -9,6 +9,12 @@ what is the search-string and here the newtext to edit
 command1
 command2
 command1
+command2
+command1
+command2
+command1
+command2
+command1
 
 command2
 command1
