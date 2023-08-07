@@ -1,10 +1,10 @@
 snel_installer definition-file for 
-si-version===2.0
+si-version===2.2
 
 
 This file contains installation-information for:
 project-name===si-test-project
-def-version===1.0
+def-version===1.2
 
 
 Project-specific remarks:
@@ -16,17 +16,26 @@ to be copied.
 ===================================================
 
 
+
+VARIABLES TO SET
+comment: defaultly call enclosed in # like #var#
+arguments---separator=#
+stal=installables
+tes=testing
+
+
 DIRECTORIES TO CREATE
 your-comment-here
 arguments---none
 ~/testing/testdoel1
 ~/testing/testdoel2
-~/testing/testdoel3
+~/#tes#/testdoel3
 >----------------------------------<
 TARGET-LOCATION AND SOURCE-FILES TO COPY
 your-comment-here
 arguments---none
 ~/testing/testdoel1
+.
 sourcefile01
 sourcefile02
 >----------------------------------<
@@ -34,6 +43,7 @@ TARGET-LOCATION AND SOURCE-FILES TO COPY
 your-comment-here
 arguments---linux_set_exe=1
 ~/testing/testdoel2
+./#stal#
 sourcefile03
 sourcefile04
 >----------------------------------<
@@ -41,6 +51,7 @@ TARGET-LOCATION AND SOURCE-FILES TO COPY
 your-comment-here
 arguments---none
 ~/testing/testdoel3
+.
 sourcefile05
 sourcefile06
 >----------------------------------<
@@ -48,7 +59,7 @@ EDIT FILE (ADD, DELETE, REPLACE LINES)
 your-comment-here
 arguments---none
 insertions
-some_config.txt
+#stal#/some_config.txt
 forward
 1
 the search-string

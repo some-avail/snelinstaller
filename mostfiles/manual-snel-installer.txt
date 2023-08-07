@@ -1,10 +1,14 @@
-Manual of Snel_installer - version 2.0
+Manual of Snel_installer - version 2.2
 
 FAQ
-Does snel-installer overwrite pre-existing folders and files?
-To be tested...
+-Does snel-installer overwrite pre-existing folders and files?
+Yes it does.
+-Is an uninstaller supported?
+Not at this time.
 
 
+
+HOW TU USE SnelInstaller
 Format of the installation-definition-file (def-file):
 it contains multiple blocks with specific tasks.
 A separator-string divides the blocks.
@@ -14,9 +18,11 @@ handling of the block.
 
 The lines after the block-header contain the actual 
 install-data. The order of line-numbers is relevant to
-how they are handled by the installer.
-(a future-version may be name-based instead of 
-order-based).
+how they are handled by the installer. So the install-data 
+is order-based; this is usefull to minimize the 
+text-input-work. (as opposed to name-based but then 
+on each line a name must be typed.)
+
 
 The first line after the header is allways a 
 comment-line and should tell what the block does.
@@ -24,12 +30,18 @@ comment-line and should tell what the block does.
 The second line is allways an arguments-line in which additional 
 arguments can be added with a format:
 arguments---arg1=value1,,arg2=value2
-
+ 
 Currently supported arguments (second line of each block): 
-for block: TARGET-LOCATION AND SOURCE-FILES TO COPY
+- for block: VARIABLES TO SET
+the variable-separator (see below)
+- for block: TARGET-LOCATION AND SOURCE-FILES TO COPY
 linux_set_exe=1			enable executable bits for executable files in linux
 linux_use_sudo=1		use linux-admin rights (but then call also like: sudo snel_installer)
 
+A variable-block "VARIABLES TO SET" is added since SI 2.2 in which short 
+place-holders can be defined for long paths. See below for more explanation. 
+Variables are currently only supported for paths; maybe lateron it will be 
+done by substituting all the vars in the file before do any other handling.
 
 The block "EDIT FILE (ADD, DELETE, REPLACE LINES)" has three possible
 operations: inserting lines, deleting lines and replacing a single line.
@@ -54,19 +66,35 @@ The last block is EXECUTE SHELL-COMMANDS.
 Any arbitrary linux-command can be executed here.
 
 
+
+VARIABLES TO SET
+your-comment-here
+arguments---separator=#
+varname1=/some-long/path
+varname2=/another/long/path
+
+
 DIRECTORIES TO CREATE
 your-comment-here
 arguments---none (default is none, above you see available args)
--list all the directories to be created with full paths,
-but home-dir sign (~) is filled in automatically
+-list all the directories to be created either with full paths,
+(but home-dir sign (~) is filled in automatically) or with 
+help of variables. The vars must -while calling- be surrounded 
+by the var-separator, defaultly #.
 (all subdirs must be created separately; 
-if dirs allready exist the creation is skipped)
+if dirs allready exist the creation is skipped): sample-list
+#varname1#
+#varname2#
+~/some-path-in-the-home-dir
 >----------------------------------<
 TARGET-LOCATION AND SOURCE-FILES TO COPY
 your-comment-here
 arguments---none
-target-location-path
-all source-files to be copied to the above target-location
+-target-location-path (all paths can have tildes or path-vars)
+-source-location-path (this line new since SI 2.1)
+-then a vertical list of all source-files coming from above 
+source-location and to be copied to the above target-location.
+No vars can be used in this file-only list.
 >----------------------------------<
 TARGET-LOCATION AND SOURCE-FILES TO COPY
 your-comment-here
@@ -77,9 +105,9 @@ EDIT FILE (ADD, DELETE, REPLACE LINES)
 your-comment-here
 arguments---none
 operation; pick from: insertions, deletions or replacement
-file-path to the file to edit
+file-path to the file to edit (path-vars and tilde usable)
 search-direction: forward or backward
-occurence of string (1-based number)
+occurence of search-string (1-based number)
 search-string = locating-string (place where to put the commands)
 relative position to search-string = line-orientation (before, on, after)
 Depending of above chosen operation, do one of the following:
