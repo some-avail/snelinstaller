@@ -63,11 +63,13 @@
 #=============================================
 
 
-var versionfl:float = 2.1
+var 
+  versionfl:float = 2.2
+  for_realbo: bool = true
 
 
 # import std/[os, strutils, parseopt, paths]
-import std/[os, strutils, parseopt]
+import std/[os, strutils, parseopt, tables]
 import jo_file_ops
 
 
@@ -99,6 +101,24 @@ proc confirmInstall(): bool =
     result = false
 
 
+proc expandVars(inputst, varsepst: string, variableta: var Table[string, string]): string = 
+  #[
+    Substitute in inputst all the vars surrounded by varsepst based on the
+    key-value-list in variableta 
+  ]#
+
+  var 
+    fullkeyst: string
+    tekst = inputst
+
+  for keyst, valst in variableta:
+    fullkeyst = varsepst & keyst & varsepst
+    if fullkeyst in tekst:
+      tekst = tekst.replace(fullkeyst, valst)
+
+  result = tekst
+
+
 
 proc installFromDef(install_def_filest: string, first_callbo: bool = true): bool = 
   #[
@@ -110,7 +130,8 @@ proc installFromDef(install_def_filest: string, first_callbo: bool = true): bool
     def_filenamest: string = install_def_filest
     completionbo: bool = false
     myfile: File
-    blockheadar: array[4, string] = [
+    blockheadar: array[5, string] = [
+        "VARIABLES TO SET", 
         "DIRECTORIES TO CREATE",
         "TARGET-LOCATION AND SOURCE-FILES TO COPY",
         "EDIT FILE (ADD, DELETE, REPLACE LINES)",
@@ -130,6 +151,10 @@ proc installFromDef(install_def_filest: string, first_callbo: bool = true): bool
     argumentsq: seq[string] = @[]
     linux_setexe: bool= false
     linux_use_sudo: bool = false
+    varsepst: string
+    varsta = initTable[string, string]()
+    varlinesq: seq[string] = @[]
+    pathst: string
     
 
   echo "\pCurrent directory: ", getAppDir()
@@ -155,17 +180,32 @@ proc installFromDef(install_def_filest: string, first_callbo: bool = true): bool
           blocklineit += 1
           if line != blockseparatorst:   # block-separating string
 
-            if blockphasest == "DIRECTORIES TO CREATE":
+            if blockphasest == "VARIABLES TO SET":
+              if blocklineit == 1:  # comment-line
+                discard
+              elif blocklineit == 2:  # read the separator-string
+                # handle arguments
+                all_argst = line.split("---")[1]
+                varsepst = all_argst.split("=")[1]
+              else:
+                varlinesq = line.split("=")
+                varsta[varlinesq[0]] = varlinesq[1]
+                echo line
+              
+            elif blockphasest == "DIRECTORIES TO CREATE":
               if blocklineit == 1:  # comment-line
                 discard
               elif blocklineit == 2:
                 # handle arguments
                 discard
               else:
-                if not existsOrCreateDir(expandTilde(line)):   # proc creates only when non-existent
-                  echo "creating directory: " & line
+                pathst = expandTilde(line)
+                pathst = expandVars(pathst, varsepst, varsta)
+                if not existsOrCreateDir(pathst):   # proc creates only when non-existent
+                  echo "creating directory: " & pathst
 
             elif blockphasest == "TARGET-LOCATION AND SOURCE-FILES TO COPY":
+
               if blocklineit == 1:  # comment-line
                 discard
 
@@ -182,9 +222,12 @@ proc installFromDef(install_def_filest: string, first_callbo: bool = true): bool
                     linux_use_sudo = true
 
               elif blocklineit == 3:
-                targetdirpathst = expandTilde(line)
+                pathst = expandTilde(line)
+                targetdirpathst = expandVars(pathst, varsepst, varsta)
               elif blocklineit == 4:
-                sourcedirpathst = expandTilde(line)
+                pathst = expandTilde(line)
+                sourcedirpathst = expandVars(pathst, varsepst, varsta)
+
               else:
                 sourcefilest = line
                 sourcefilepathst = joinPath(sourcedirpathst, sourcefilest)                
@@ -199,8 +242,9 @@ proc installFromDef(install_def_filest: string, first_callbo: bool = true): bool
             elif blockphasest == "EDIT FILE (ADD, DELETE, REPLACE LINES)":
               #echo "----edit-test----"
               #echo blocklineit
-              
-              echo line
+              if blocklineit != 4: 
+                echo line
+
               if blocklineit == 1:  # comment-line
                 discard
               elif blocklineit == 2:
@@ -208,20 +252,25 @@ proc installFromDef(install_def_filest: string, first_callbo: bool = true): bool
                 discard      
               elif blocklineit in 3..8:
                 editfileprops[blocklineit - 3]=line
+                if blocklineit == 4:
+                  pathst = expandTilde(line)
+                  pathst = expandVars(pathst, varsepst, varsta)
+                  echo pathst
               elif blocklineit > 8:
                 if line == "end-of-edit-block-here":
                   jo_file_ops.alterTextFile(
                         operationst = editfileprops[0],
-                        targetfilepathst = expandTilde(editfileprops[1]), 
+                        targetfilepathst = pathst, 
                         line_orientationst = editfileprops[5], 
                         locating_stringst = editfileprops[4], 
                         occurit = parseint(editfileprops[3]),
                         directionst = editfileprops[2],
                         operationparamsq = ops_paramsq)
-                  echo "\p" & editfileprops[0] & " performed on: " & editfileprops[1] & "\p"
+                  echo "\p" & editfileprops[0] & " performed on: " & pathst & "\p"
 
                 else:
                   ops_paramsq.add(line)
+
             elif blockphasest == "EXECUTE SHELL-COMMANDS - IN ORDER":
               if blocklineit == 1:  # comment-line
                 discard
@@ -273,8 +322,11 @@ proc installFromDef(install_def_filest: string, first_callbo: bool = true): bool
 
 
 proc processCommandLine() = 
+  
+  # Process the args appended after the calling executable
+  # Currently only the install-def-file
 
-  # var p = initOptParser("-ab -e:5 --foo --bar=20 file.txt")
+  # possible format: "-ab -e:5 --foo --bar=20 file.txt"
   var
     optob = initOptParser()
     passit: int = 0
@@ -315,7 +367,19 @@ proc dummy() =
 
 # **********************************************************
 
-if confirmInstall():
-  processCommandLine()
+if for_realbo:   # run the actual program
+  if confirmInstall():
+    processCommandLine()
+else:   # perform tests
+  var 
+    varsta = initTable[string, string]()
+    inputst = "i am #tes# the #stal# files"
+  
+  varsta["stal"] = "installable"
+  varsta["tes"] = "testing"
+
+
+  echo inputst
+  echo expandVars(inputst, "#", varsta)
 
 
