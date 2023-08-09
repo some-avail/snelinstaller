@@ -166,6 +166,7 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
     varsta = initTable[string, string]()
     varlinesq: seq[string] = @[]
     pathst: string
+    linest: string
     
 
   echo "\pCurrent directory: ", getAppDir()
@@ -174,13 +175,14 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
 
   if open(myfile, def_filenamest):    # try to open the def-file
     try:
-      # validate the def-file (skip for now)
 
       # walk thru the lines of the file
+      # first pass of two passes to retrieve the variables
+      # (substitute the values in the next pass)
       echo "\n=====Begin processing===="
       for line in myfile.lines:
         lastline = line
-        
+
         # check for block-header
         if line in blockheadar:
           blockphasest = line
@@ -202,16 +204,39 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
                 varlinesq = line.split("=")
                 varsta[varlinesq[0]] = varlinesq[1]
                 echo line
+          else:
+            # then the former block is completed
+            blockphasest = ""
+            break
+
+
+      # walk thru the lines of the file
+      # second pass to do the other block-phases
+      for line in myfile.lines:
+        lastline = line
+
+        # substitute the variable-values from the first pass here
+        linest = expandVars(line, varsepst, varsta)
+
+
+        # check for block-header
+        if linest in blockheadar:
+          blockphasest = linest
+          echo "\p" & blockphasest
+          blocklineit = 0
+        elif linest != "":
+        
+          blocklineit += 1
+          if linest != blockseparatorst:   # block-separating string
               
-            elif blockphasest == "DIRECTORIES TO CREATE":
+            if blockphasest == "DIRECTORIES TO CREATE":
               if blocklineit == 1:  # comment-line
                 discard
               elif blocklineit == 2:
                 # handle arguments
                 discard
               else:
-                pathst = expandTilde(line)
-                pathst = expandVars(pathst, varsepst, varsta)
+                pathst = expandTilde(linest)
                 if not existsOrCreateDir(pathst):   # proc creates only when non-existent
                   echo "creating directory: " & pathst
 
@@ -221,8 +246,8 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
                 discard
 
               elif blocklineit == 2:    # handle arguments
-                if line != "arguments---none":
-                  all_argst = line.split("---")[1]
+                if linest != "arguments---none":
+                  all_argst = linest.split("---")[1]
                   argumentsq = all_argst.split(",,")
                   #echo repr argumentsq
                   if jo_file_ops.getValueFromKey(argumentsq, "=", "linux_set_exe") == "1":
@@ -233,14 +258,12 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
                     linux_use_sudo = true
 
               elif blocklineit == 3:
-                pathst = expandTilde(line)
-                targetdirpathst = expandVars(pathst, varsepst, varsta)
+                targetdirpathst = expandTilde(linest)
               elif blocklineit == 4:
-                pathst = expandTilde(line)
-                sourcedirpathst = expandVars(pathst, varsepst, varsta)
+                sourcedirpathst = expandTilde(linest)
 
               else:
-                sourcefilest = line
+                sourcefilest = linest
                 sourcefilepathst = joinPath(sourcedirpathst, sourcefilest)                
                 echo "copying: " & sourcefilepathst & "   to:   " & targetdirpathst
                 targetfilepathst = joinPath(targetdirpathst, sourcefilest)
@@ -254,7 +277,7 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
               #echo "----edit-test----"
               #echo blocklineit
               if blocklineit != 4: 
-                echo line
+                echo linest
 
               if blocklineit == 1:  # comment-line
                 discard
@@ -262,13 +285,12 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
                 # handle arguments
                 discard      
               elif blocklineit in 3..8:
-                editfileprops[blocklineit - 3]=line
+                editfileprops[blocklineit - 3]=linest
                 if blocklineit == 4:
-                  pathst = expandTilde(line)
-                  pathst = expandVars(pathst, varsepst, varsta)
+                  pathst = expandTilde(linest)
                   echo pathst
               elif blocklineit > 8:
-                if line == "end-of-edit-block-here":
+                if linest == "end-of-edit-block-here":
                   jo_file_ops.alterTextFile(
                         operationst = editfileprops[0],
                         targetfilepathst = pathst, 
@@ -280,7 +302,7 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
                   echo "\p" & editfileprops[0] & " performed on: " & pathst & "\p"
 
                 else:
-                  ops_paramsq.add(line)
+                  ops_paramsq.add(linest)
 
 
             elif blockphasest == "EXECUTE SHELL-COMMANDS - IN ORDER":
@@ -290,8 +312,8 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
                 # handle arguments
                 discard
               else:
-                echo "Running command: " & line
-                discard execShellCmd(line)
+                echo "Running command: " & linest
+                discard execShellCmd(linest)
 
 
             elif blockphasest == "CALL OTHER INSTALLATIONS":
@@ -302,9 +324,9 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
                 discard
               else:
                 echo "*********************************************************************"
-                echo "Executing subordinate installation seq. nr. " & $(blocklineit - 2) & ": " & line
+                echo "Executing subordinate installation seq. nr. " & $(blocklineit - 2) & ": " & linest
                 echo "*********************************************************************"
-                discard execShellCmd(getAppFilename() & " " & line & " --level:" & $(call_levelit + 1))
+                discard execShellCmd(getAppFilename() & " " & linest & " --level:" & $(call_levelit + 1))
             
           else:
             # then the former block is completed

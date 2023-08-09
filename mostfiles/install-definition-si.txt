@@ -22,8 +22,7 @@ comment: defaultly call enclosed in # like #var#
 arguments---separator=#
 stal=installables
 tes=testing
-
-
+>----------------------------------<
 DIRECTORIES TO CREATE
 your-comment-here
 arguments---none
@@ -99,4 +98,11 @@ your-comment-here
 arguments---none
 pwd
 >----------------------------------<
+CALL OTHER INSTALLATIONS
+your-comment-here
+arguments---none
+si-test02_install-def-si_2.3.txt
+>----------------------------------<
 #END-OF-BLOCKS
+
+

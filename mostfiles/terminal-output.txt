@@ -1,7 +1,7 @@
-jo_file_ops 1.2 is called...
+Call-level = 0
 
 ===============================
-Program Snel_Installer 2.2 is running...
+Program Snel_Installer 2.3 is running...
 Make sure to run snel_installer with sufficient rights.
 Do you want to continue? (y/n)
 y
@@ -9,7 +9,7 @@ continuing...
 
 Current directory: /media/OnsSpul/1klein/1joris/k1-onderwerpen/computer/Programmeren/nimtaal/snelinstaller/mostfiles
 
-Trying to open file: si-test01_install-def-si_2.2.txt
+Trying to open file: si-test01_install-def-si_2.3.txt
 
 
 =====Begin processing====
@@ -54,7 +54,37 @@ EXECUTE SHELL-COMMANDS - IN ORDER
 Running command: pwd
 /media/OnsSpul/1klein/1joris/k1-onderwerpen/computer/Programmeren/nimtaal/snelinstaller/mostfiles
 
+CALL OTHER INSTALLATIONS
+*********************************************************************
+Executing subordinate installation seq. nr. 1: si-test02_install-def-si_2.3.txt
+*********************************************************************
+Call-level = 1
+
+===============================
+Program Snel_Installer 2.3 is running...
+Make sure to run snel_installer with sufficient rights.
+
+Current directory: /media/OnsSpul/1klein/1joris/k1-onderwerpen/computer/Programmeren/nimtaal/snelinstaller/mostfiles
+
+Trying to open file: si-test02_install-def-si_2.3.txt
+
+
+=====Begin processing====
+
+VARIABLES TO SET
+stal=installables
+
+DIRECTORIES TO CREATE
+
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+copying: installables/otherfile01   to:   /home/bruik/testing/testdoel1
+copying: installables/otherfile02   to:   /home/bruik/testing/testdoel1
+
 ===End of processing====
 
-Installation or dry-run has been completed!
+Installation has been completed!
+
+===End of processing====
+
+Installation has been completed!
 
