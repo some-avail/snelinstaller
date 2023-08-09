@@ -1,0 +1,60 @@
+jo_file_ops 1.2 is called...
+
+===============================
+Program Snel_Installer 2.2 is running...
+Make sure to run snel_installer with sufficient rights.
+Do you want to continue? (y/n)
+y
+continuing...
+
+Current directory: /media/OnsSpul/1klein/1joris/k1-onderwerpen/computer/Programmeren/nimtaal/snelinstaller/mostfiles
+
+Trying to open file: si-test01_install-def-si_2.2.txt
+
+
+=====Begin processing====
+
+VARIABLES TO SET
+stal=installables
+tes=testing
+
+DIRECTORIES TO CREATE
+
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+copying: ./sourcefile01   to:   /home/bruik/testing/testdoel1
+copying: ./sourcefile02   to:   /home/bruik/testing/testdoel1
+
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+linux_set_exe = true
+copying: installables/sourcefile03   to:   /home/bruik/testing/testdoel2
+copying: installables/sourcefile04   to:   /home/bruik/testing/testdoel2
+
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+copying: ./sourcefile05   to:   /home/bruik/testing/testdoel3
+copying: ./sourcefile06   to:   /home/bruik/testing/testdoel3
+
+EDIT FILE (ADD, DELETE, REPLACE LINES)
+your-comment-here
+arguments---none
+insertions
+installables/some_config.txt
+forward
+1
+the search-string
+after
+command1
+command2
+end-of-edit-block-here
+Locating-string found at: 47
+
+insertions performed on: installables/some_config.txt
+
+
+EXECUTE SHELL-COMMANDS - IN ORDER
+Running command: pwd
+/media/OnsSpul/1klein/1joris/k1-onderwerpen/computer/Programmeren/nimtaal/snelinstaller/mostfiles
+
+===End of processing====
+
+Installation or dry-run has been completed!
+
