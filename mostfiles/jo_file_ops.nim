@@ -321,7 +321,7 @@ proc alterTextFile*(operationst, targetfilepathst, locating_stringst:string,
   writeFile(targetfilepathst, filecontentst)
 
 
-echo "jo_file_ops " & $(versionfl) & " is called..."     
+# echo "jo_file_ops " & $(versionfl) & " is called..."
 
 
 when isMainModule:

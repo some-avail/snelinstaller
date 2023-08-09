@@ -64,8 +64,11 @@
 
 
 var 
-  versionfl:float = 2.2
-  for_realbo: bool = true
+  versionfl:float = 2.3
+  ask_confirmationbo: bool = true
+
+  arg_def_filest: string
+  arg_levelit: int
 
 
 # import std/[os, strutils, parseopt, paths]
@@ -84,21 +87,25 @@ proc yes(question: string): bool =
   
 
 
-proc confirmInstall(): bool =
+proc confirmInstall(askbo: bool): bool =
 
   # report status and ask followup-action
   echo "\n==============================="
   echo "Program Snel_Installer " & $(versionfl) & " is running..."     
   echo "Make sure to run snel_installer with sufficient rights."
 
-  if yes("Do you want to continue?"):
-    echo "continuing..."
+  if askbo:
+    if yes("Do you want to continue?"):
+      echo "continuing..."
+      result = true
+
+    else:
+      echo "aborting Snel_Installer...goodbye!"
+      # quit(QuitSuccess)     # no longer needy
+      result = false
+  else:
     result = true
 
-  else:
-    echo "aborting Snel_Installer...goodbye!"
-    # quit(QuitSuccess)     # no longer needy
-    result = false
 
 
 proc expandVars(inputst, varsepst: string, variableta: var Table[string, string]): string = 
@@ -120,9 +127,12 @@ proc expandVars(inputst, varsepst: string, variableta: var Table[string, string]
 
 
 
-proc installFromDef(install_def_filest: string, first_callbo: bool = true): bool = 
+proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool = 
   #[
     Install files based on the definition passed as argument in the program-call.
+    Calling installs can be done recurrently with CALL OTHER INSTALLATIONS
+    Call-level is zero-based; upcount every subordinate call with 1.
+
   ]#
 
 
@@ -130,12 +140,13 @@ proc installFromDef(install_def_filest: string, first_callbo: bool = true): bool
     def_filenamest: string = install_def_filest
     completionbo: bool = false
     myfile: File
-    blockheadar: array[5, string] = [
+    blockheadar: array[0..5, string] = [
         "VARIABLES TO SET", 
         "DIRECTORIES TO CREATE",
         "TARGET-LOCATION AND SOURCE-FILES TO COPY",
         "EDIT FILE (ADD, DELETE, REPLACE LINES)",
-        "EXECUTE SHELL-COMMANDS - IN ORDER"]
+        "EXECUTE SHELL-COMMANDS - IN ORDER",
+        "CALL OTHER INSTALLATIONS"]
     blockphasest: string = ""
     blocklineit: int
     blockseparatorst = ">----------------------------------<"
@@ -271,6 +282,7 @@ proc installFromDef(install_def_filest: string, first_callbo: bool = true): bool
                 else:
                   ops_paramsq.add(line)
 
+
             elif blockphasest == "EXECUTE SHELL-COMMANDS - IN ORDER":
               if blocklineit == 1:  # comment-line
                 discard
@@ -281,6 +293,19 @@ proc installFromDef(install_def_filest: string, first_callbo: bool = true): bool
                 echo "Running command: " & line
                 discard execShellCmd(line)
 
+
+            elif blockphasest == "CALL OTHER INSTALLATIONS":
+              if blocklineit == 1:  # comment-line
+                discard
+              elif blocklineit == 2:
+                # handle arguments
+                discard
+              else:
+                echo "*********************************************************************"
+                echo "Executing subordinate installation seq. nr. " & $(blocklineit - 2) & ": " & line
+                echo "*********************************************************************"
+                discard execShellCmd(getAppFilename() & " " & line & " --level:" & $(call_levelit + 1))
+            
           else:
             # then the former block is completed
             blockphasest = ""
@@ -288,11 +313,11 @@ proc installFromDef(install_def_filest: string, first_callbo: bool = true): bool
             linux_setexe = false
             linux_use_sudo = false
       
-
       completionbo = true
       result = completionbo
       echo "\p===End of processing====\p"
       
+
     except IOError:
       echo "IO error!"
     
@@ -321,20 +346,23 @@ proc installFromDef(install_def_filest: string, first_callbo: bool = true): bool
     echo "Could not open file! \pThe argument provided is not a valid file. "
 
 
-proc processCommandLine() = 
+
+
+proc loadCommandLineArgs() = 
   
   # Process the args appended after the calling executable
   # Currently only the install-def-file
 
   # possible format: "-ab -e:5 --foo --bar=20 file.txt"
+
   var
     optob = initOptParser()
     passit: int = 0
 
+  arg_levelit = 0
+
   while true:
     optob.next()
-    var keyst = optob.key
-    var valst = optob.val
     case optob.kind
     of cmdEnd:
       if passit == 0:
@@ -345,19 +373,24 @@ proc processCommandLine() =
 
     of cmdArgument:
       # echo "Argument: ", optob.key
-      if installFromDef(keyst, true):
-        echo "Installation or dry-run has been completed!"
-      else:
-        echo "Installation or dry-run ended prematurely!"
+      arg_def_filest = optob.key
 
     of cmdShortOption, cmdLongOption:
       # not yet used
       if optob.val == "":
         echo "Option: ", optob.key
       else:
-        echo "Option and value: ", optob.key, ", ", optob.val
+        # echo "Option and value: ", optob.key, ", ", optob.val
+        case optob.key:
+          of "level":
+            arg_levelit = parseInt(optob.val)
+            echo "Call-level = ", arg_levelit
 
     passit += 1
+
+  if arg_levelit == 0: echo "\pCall-level = 0"
+
+
 
 
 proc dummy() = 
@@ -366,18 +399,28 @@ proc dummy() =
 
 
 # **********************************************************
+var for_realbo: bool = true
+
 
 if for_realbo:   # run the actual program
-  if confirmInstall():
-    processCommandLine()
+  
+  loadCommandLineArgs()
+  if arg_levelit > 0: ask_confirmationbo = false
+  if confirmInstall(ask_confirmationbo):
+
+    if installFromDef(arg_def_filest, arg_levelit):
+      echo "Installation has been completed!"
+    else:
+      echo "Installation ended prematurely!"
+
 else:   # perform tests
+
   var 
     varsta = initTable[string, string]()
     inputst = "i am #tes# the #stal# files"
   
   varsta["stal"] = "installable"
   varsta["tes"] = "testing"
-
 
   echo inputst
   echo expandVars(inputst, "#", varsta)

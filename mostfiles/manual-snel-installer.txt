@@ -9,7 +9,24 @@ Not at this time.
 
 
 HOW TU USE SnelInstaller
-Format of the installation-definition-file (def-file):
+
+Open a terminal and go to the place where 
+your snelinstaller-exe lives. Type in 
+the following command:
+
+./snel_installer your-install-def.txt
+
+Quickly done; the work is off-course in the authoring of
+the install-definiton-file. While reading this manual 
+take a regular look at the sample: install-definition-si.txt
+
+Allthough above a generic name is used for ease of use, 
+the following name-format is recommended:
+YourProject_install-def-si_x.y.txt
+where x.y stands for the version of the executable 
+snel_installer (linux) or snel_installer.exe (future windows).
+
+Inner format of the installation-definition-file (def-file):
 it contains multiple blocks with specific tasks.
 A separator-string divides the blocks.
 Each block-header is a specific string written in
