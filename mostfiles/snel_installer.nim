@@ -372,8 +372,8 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
 
 proc loadCommandLineArgs() = 
   
-  # Process the args appended after the calling executable
-  # Currently only the install-def-file
+  # Load the args appended after the calling executable
+  # and write them to module-level variables.
 
   # possible format: "-ab -e:5 --foo --bar=20 file.txt"
 
@@ -437,6 +437,7 @@ if for_realbo:   # run the actual program
 
 else:   # perform tests
 
+  # proc expandVars
   var 
     varsta = initTable[string, string]()
     inputst = "i am #tes# the #stal# files"
