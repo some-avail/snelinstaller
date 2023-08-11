@@ -1,0 +1,9 @@
+
+FAQ SnelInstaller
+
+
+-Does snel-installer overwrite pre-existing folders and files?
+Yes it does.
+-Is an uninstaller supported?
+Not at this time.
+

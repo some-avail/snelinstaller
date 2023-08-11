@@ -1,10 +1,10 @@
 snel_installer definition-file for 
-si-version===2.2
+si-version===2.3
 
 
 This file contains installation-information for:
 project-name===si-test-project
-def-version===1.2
+def-version===1.3
 
 
 Project-specific remarks:
@@ -20,37 +20,37 @@ to be copied.
 VARIABLES TO SET
 comment: defaultly call enclosed in # like #var#
 arguments---separator=#
-stal=installables
-tes=testing
+myproject=./test_projects/basic_sample
 >----------------------------------<
 DIRECTORIES TO CREATE
 your-comment-here
 arguments---none
-~/testing/testdoel1
-~/testing/testdoel2
-~/#tes#/testdoel3
+#myproject#/targetdir
+#myproject#/targetdir/targ1
+#myproject#/targetdir/targ2
+#myproject#/targetdir/targ3
 >----------------------------------<
 TARGET-LOCATION AND SOURCE-FILES TO COPY
 your-comment-here
 arguments---none
-~/testing/testdoel1
-.
+#myproject#/targetdir/targ1
+#myproject#/sources
 sourcefile01
 sourcefile02
 >----------------------------------<
 TARGET-LOCATION AND SOURCE-FILES TO COPY
 your-comment-here
 arguments---linux_set_exe=1
-~/testing/testdoel2
-./#stal#
+#myproject#/targetdir/targ2
+#myproject#/sources/demo_subdir
 sourcefile03
 sourcefile04
 >----------------------------------<
 TARGET-LOCATION AND SOURCE-FILES TO COPY
 your-comment-here
 arguments---none
-~/testing/testdoel3
-.
+#myproject#/targetdir/targ3
+#myproject#/sources
 sourcefile05
 sourcefile06
 >----------------------------------<
@@ -58,7 +58,7 @@ EDIT FILE (ADD, DELETE, REPLACE LINES)
 your-comment-here
 arguments---none
 insertions
-#stal#/some_config.txt
+#myproject#/sources/some_config.txt
 forward
 1
 the search-string
@@ -72,7 +72,7 @@ disable_EDIT FILE (ADD, DELETE, REPLACE LINES)
 Delete 3 lines after the search-string.
 arguments---none
 deletions
-some_config.txt
+#myproject#/sources/some_config.txt
 forward
 1
 the search-string
@@ -84,7 +84,7 @@ disable_EDIT FILE (ADD, DELETE, REPLACE LINES)
 with replacement line-orientation must be: on
 arguments---none
 replacement
-some_config.txt
+#myproject#/sources/some_config.txt
 forward
 1
 the search-string
@@ -101,7 +101,7 @@ pwd
 CALL OTHER INSTALLATIONS
 your-comment-here
 arguments---none
-si-test02_install-def-si_2.3.txt
+#myproject#/basic-sample-02_install-def-si_2.3.txt
 >----------------------------------<
 #END-OF-BLOCKS
 

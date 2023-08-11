@@ -17,14 +17,12 @@ For now it only has been tested on linux, but is expected to run on Windows. Pac
 
 
 
-[Go to Sample-definition-file] (https://github.com/some-avail/snelinstaller/blob/main/mostfiles/install-definition-si.txt)
-
-[Go to preliminary user-manual] (https://github.com/some-avail/snelinstaller/blob/main/mostfiles/manual-snel-installer.txt)
+[Go to Sample-definition-file] (https://github.com/some-avail/snelinstaller/blob/main/mostfiles/test_projects/basic_sample/basic-sample-01_install-def-si_2.3.txt)
 
 [Go to sample terminal-output after running] (https://github.com/some-avail/snelinstaller/blob/main/mostfiles/terminal-output.txt)
 
 
-
+[Go to preliminary user-manual] (https://github.com/some-avail/snelinstaller/blob/main/mostfiles/manual-snel-installer.txt)
 
 
 

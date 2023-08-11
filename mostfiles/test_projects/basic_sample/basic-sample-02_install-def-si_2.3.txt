@@ -1,14 +1,14 @@
 snel_installer definition-file for 
-si-version===2.2
+si-version===2.3
 
 
 This file contains installation-information for:
 project-name===si-test-project-02
-def-version===1.2
+def-version===1.3
 
 
 Project-specific remarks:
-Meant of sub-installation
+Meant as sub-installation
 This is a test-config. 
 You need some dummy files
 to be copied. 
@@ -21,18 +21,13 @@ to be copied.
 VARIABLES TO SET
 comment: defaultly call enclosed in # like #var#
 arguments---separator=#
-stal=installables
->----------------------------------<
-DIRECTORIES TO CREATE
-your-comment-here
-arguments---none
-~/testing/testdoel1
+myproject=./test_projects/basic_sample
 >----------------------------------<
 TARGET-LOCATION AND SOURCE-FILES TO COPY
 your-comment-here
 arguments---none
-~/testing/testdoel1
-./#stal#
+#myproject#/targetdir/targ1
+#myproject#/sources/demo_subdir
 otherfile01
 otherfile02
 >----------------------------------<

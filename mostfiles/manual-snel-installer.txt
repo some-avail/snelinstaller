@@ -1,24 +1,19 @@
 Manual of Snel_installer - version 2.2
 
-FAQ
--Does snel-installer overwrite pre-existing folders and files?
-Yes it does.
--Is an uninstaller supported?
-Not at this time.
-
-
 
 HOW TU USE SnelInstaller
 
 Open a terminal and go to the place where 
-your snelinstaller-exe lives. Type in 
+your snelinstaller-program lives. Type in 
 the following command:
 
 ./snel_installer your-install-def.txt
+or the co-delivered sample-file:
+./snel_installer ./test_projects/basic_sample/basic-sample-01_install-def-si_2.3.txt
 
-Quickly done; the work is off-course in the authoring of
+That's quickly done; the work is off-course in the authoring of
 the install-definiton-file. While reading this manual 
-take a regular look at the sample: install-definition-si.txt
+take a regular look at the sample: basic-sample-01_install-def-si_2.3.txt
 
 Allthough above a generic name is used for ease of use, 
 the following name-format is recommended:
@@ -26,20 +21,27 @@ YourProject_install-def-si_x.y.txt
 where x.y stands for the version of the executable 
 snel_installer (linux) or snel_installer.exe (future windows).
 
-Inner format of the installation-definition-file (def-file):
+About the inner format of the installation-definition-file (def-file):
 it contains multiple blocks with specific tasks.
 A separator-string divides the blocks.
 Each block-header is a specific string written in
 capital letters. This header-string determines the 
-handling of the block.
+handling of the block. Following headers exist:
+
+VARIABLES TO SET
+DIRECTORIES TO CREATE
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+EDIT FILE (ADD, DELETE, REPLACE LINES
+EXECUTE SHELL-COMMANDS - IN ORDER
+CALL OTHER INSTALLATIONS
+
 
 The lines after the block-header contain the actual 
-install-data. The order of line-numbers is relevant to
+install-data. The order of line-types is fixed and relevant to
 how they are handled by the installer. So the install-data 
 is order-based; this is usefull to minimize the 
-text-input-work. (as opposed to name-based but then 
+text-input-work. (as opposed to name-based; but then 
 on each line a name must be typed.)
-
 
 The first line after the header is allways a 
 comment-line and should tell what the block does.
@@ -54,6 +56,10 @@ the variable-separator (see below)
 - for block: TARGET-LOCATION AND SOURCE-FILES TO COPY
 linux_set_exe=1			enable executable bits for executable files in linux
 linux_use_sudo=1		use linux-admin rights (but then call also like: sudo snel_installer)
+
+The following lines are different for each block.
+
+Some info on specific blocks:
 
 A variable-block "VARIABLES TO SET" is added since SI 2.2 in which short 
 place-holders can be defined for long paths. See below for more explanation. 
@@ -76,12 +82,23 @@ If your search-config is faulty and does not deliver a
 located line, SI will give you an error. (e.g. if you ask for the 4th
 occurence of a search-string and there are only two occurrences.)
 
+The before-last block is EXECUTE SHELL-COMMANDS.
+Any arbitrary linux-command can be executed here.
+
+The block "CALL OTHER INSTALLATIONS" is added in SI 2.3 and enables the 
+calling of subordinate installations / def-files. Multiple install-defs 
+can be called, whereby each one can call another one, creating the possibility 
+of quite flexible installations. In defining the path of the defs 
+one must reckon with the location of the executable.
+
 Below is a description of the definition which explains how 
 to fill in the lines and what the installer expects.
 
-The last block is EXECUTE SHELL-COMMANDS.
-Any arbitrary linux-command can be executed here.
+The block-phases can be ordered in the way that makes sense. For example, 
+when dependencies must be installed first, the subordinate-installs can be put
+right behind the variables-to-set.
 
+=============================================
 
 
 VARIABLES TO SET
@@ -111,7 +128,6 @@ arguments---none
 -source-location-path (this line new since SI 2.1)
 -then a vertical list of all source-files coming from above 
 source-location and to be copied to the above target-location.
-No vars can be used in this file-only list.
 >----------------------------------<
 TARGET-LOCATION AND SOURCE-FILES TO COPY
 your-comment-here
@@ -144,3 +160,11 @@ arguments---none
 my command1
 my command2
 >----------------------------------<
+CALL OTHER INSTALLATIONS
+your-comment-here
+arguments---none
+#varname1#/subordinate-install-def.txt
+#varname1#/another-subinstall.txt
+>----------------------------------<
+#END-OF-BLOCKS
+

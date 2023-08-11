@@ -1,3 +1,8 @@
+Running command:
+./snel_installer ./test_projects/basic_sample/basic-sample-01_install-def-si_2.3.txt
+gives output:
+
+
 Call-level = 0
 
 ===============================
@@ -9,35 +14,38 @@ continuing...
 
 Current directory: /media/OnsSpul/1klein/1joris/k1-onderwerpen/computer/Programmeren/nimtaal/snelinstaller/mostfiles
 
-Trying to open file: si-test01_install-def-si_2.3.txt
+Trying to open file: ./test_projects/basic_sample/basic-sample-01_install-def-si_2.3.txt
 
 
 =====Begin processing====
 
 VARIABLES TO SET
-stal=installables
-tes=testing
+myproject=./test_projects/basic_sample
 
 DIRECTORIES TO CREATE
+creating directory: ./test_projects/basic_sample/targetdir
+creating directory: ./test_projects/basic_sample/targetdir/targ1
+creating directory: ./test_projects/basic_sample/targetdir/targ2
+creating directory: ./test_projects/basic_sample/targetdir/targ3
 
 TARGET-LOCATION AND SOURCE-FILES TO COPY
-copying: ./sourcefile01   to:   /home/bruik/testing/testdoel1
-copying: ./sourcefile02   to:   /home/bruik/testing/testdoel1
+copying: test_projects/basic_sample/sources/sourcefile01   to:   ./test_projects/basic_sample/targetdir/targ1
+copying: test_projects/basic_sample/sources/sourcefile02   to:   ./test_projects/basic_sample/targetdir/targ1
 
 TARGET-LOCATION AND SOURCE-FILES TO COPY
 linux_set_exe = true
-copying: installables/sourcefile03   to:   /home/bruik/testing/testdoel2
-copying: installables/sourcefile04   to:   /home/bruik/testing/testdoel2
+copying: test_projects/basic_sample/sources/demo_subdir/sourcefile03   to:   ./test_projects/basic_sample/targetdir/targ2
+copying: test_projects/basic_sample/sources/demo_subdir/sourcefile04   to:   ./test_projects/basic_sample/targetdir/targ2
 
 TARGET-LOCATION AND SOURCE-FILES TO COPY
-copying: ./sourcefile05   to:   /home/bruik/testing/testdoel3
-copying: ./sourcefile06   to:   /home/bruik/testing/testdoel3
+copying: test_projects/basic_sample/sources/sourcefile05   to:   ./test_projects/basic_sample/targetdir/targ3
+copying: test_projects/basic_sample/sources/sourcefile06   to:   ./test_projects/basic_sample/targetdir/targ3
 
 EDIT FILE (ADD, DELETE, REPLACE LINES)
 your-comment-here
 arguments---none
 insertions
-installables/some_config.txt
+./test_projects/basic_sample/sources/some_config.txt
 forward
 1
 the search-string
@@ -47,7 +55,7 @@ command2
 end-of-edit-block-here
 Locating-string found at: 47
 
-insertions performed on: installables/some_config.txt
+insertions performed on: ./test_projects/basic_sample/sources/some_config.txt
 
 
 EXECUTE SHELL-COMMANDS - IN ORDER
@@ -56,7 +64,7 @@ Running command: pwd
 
 CALL OTHER INSTALLATIONS
 *********************************************************************
-Executing subordinate installation seq. nr. 1: si-test02_install-def-si_2.3.txt
+Executing subordinate installation seq. nr. 1: ./test_projects/basic_sample/basic-sample-02_install-def-si_2.3.txt
 *********************************************************************
 Call-level = 1
 
@@ -66,19 +74,17 @@ Make sure to run snel_installer with sufficient rights.
 
 Current directory: /media/OnsSpul/1klein/1joris/k1-onderwerpen/computer/Programmeren/nimtaal/snelinstaller/mostfiles
 
-Trying to open file: si-test02_install-def-si_2.3.txt
+Trying to open file: ./test_projects/basic_sample/basic-sample-02_install-def-si_2.3.txt
 
 
 =====Begin processing====
 
 VARIABLES TO SET
-stal=installables
-
-DIRECTORIES TO CREATE
+myproject=./test_projects/basic_sample
 
 TARGET-LOCATION AND SOURCE-FILES TO COPY
-copying: installables/otherfile01   to:   /home/bruik/testing/testdoel1
-copying: installables/otherfile02   to:   /home/bruik/testing/testdoel1
+copying: test_projects/basic_sample/sources/demo_subdir/otherfile01   to:   ./test_projects/basic_sample/targetdir/targ1
+copying: test_projects/basic_sample/sources/demo_subdir/otherfile02   to:   ./test_projects/basic_sample/targetdir/targ1
 
 ===End of processing====
 
@@ -87,4 +93,3 @@ Installation has been completed!
 ===End of processing====
 
 Installation has been completed!
-
