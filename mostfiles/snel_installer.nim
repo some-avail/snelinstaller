@@ -72,7 +72,7 @@ var
 
 
 # import std/[os, strutils, parseopt, paths]
-import std/[os, strutils, parseopt, tables]
+import std/[os, strutils, parseopt, tables, dirs, files]
 import jo_file_ops
 
 
@@ -167,6 +167,7 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
     varlinesq: seq[string] = @[]
     pathst: string
     linest: string
+    lineit: int
     
 
   echo "\pCurrent directory: ", getAppDir()
@@ -212,11 +213,13 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
 
       # walk thru the lines of the file
       # second pass to do the other block-phases
+      myfile.setFilePos(0)    # reset to first line
+      lineit = 1
       for line in myfile.lines:
-        lastline = line
 
         # substitute the variable-values from the first pass here
         linest = expandVars(line, varsepst, varsta)
+        lastline = linest
 
 
         # check for block-header
@@ -237,7 +240,8 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
                 discard
               else:
                 pathst = expandTilde(linest)
-                if not existsOrCreateDir(pathst):   # proc creates only when non-existent
+                if not dirExists(pathst):   
+                  createDir(pathst)     # proc creates subdirs also
                   echo "creating directory: " & pathst
 
             elif blockphasest == "TARGET-LOCATION AND SOURCE-FILES TO COPY":
@@ -267,11 +271,24 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
                 sourcefilepathst = joinPath(sourcedirpathst, sourcefilest)                
                 echo "copying: " & sourcefilepathst & "   to:   " & targetdirpathst
                 targetfilepathst = joinPath(targetdirpathst, sourcefilest)
-                copyfile(sourcefilepathst,targetfilepathst)
-                if linux_setexe:
-                  var prependst:string = ""
-                  if linux_use_sudo: prependst = "sudo "
-                  discard execShellCmd(prependst & "chmod +x " & targetfilepathst)
+                if dirExists(targetdirpathst):
+                  if fileExists(sourcefilepathst):
+                    copyfile(sourcefilepathst,targetfilepathst)
+                    if linux_setexe:
+                      var prependst:string = ""
+                      if linux_use_sudo: prependst = "sudo "
+                      discard execShellCmd(prependst & "chmod +x " & targetfilepathst)
+                  else:
+                    echo "The following file does not exist:\p", sourcefilepathst
+                    echo "Occured at def-line-nr: ", $lineit
+                    echo "\pInstallation ended prematurely!"
+                    quit(QuitSuccess)
+                else:
+                  echo "The following directory does not exist:\p", targetdirpathst
+                  echo "Occured at def-line-nr: ", $lineit
+                  echo "\pInstallation ended prematurely!"
+                  quit(QuitSuccess)
+
 
             elif blockphasest == "EDIT FILE (ADD, DELETE, REPLACE LINES)":
               #echo "----edit-test----"
@@ -334,6 +351,8 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
             # set arguments to none:
             linux_setexe = false
             linux_use_sudo = false
+
+        lineit += 1
       
       completionbo = true
       result = completionbo
@@ -352,6 +371,7 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
       echo "\p******* Technical error-information ******* \p" 
       echo "block-phase: " & blockphasest & "\p"
       echo "Last def-file-line read: " & lastline & "\p"
+      echo "Occured at def-line-nr: ", $lineit
       echo repr(errob) & "\p****End exception****\p"
 
     
@@ -360,6 +380,7 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
       echo "\p******* Unanticipated error ******* \p" 
       echo "In block-phase: " & blockphasest & "\p"
       echo "Last def-file-line read: " & lastline & "\p"
+      echo "Occured at def-line-nr: ", $lineit
       echo repr(errob) & "\p****End exception****\p"
         
     finally:

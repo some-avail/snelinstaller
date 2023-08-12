@@ -1,0 +1,108 @@
+snel_installer definition-file for 
+si-version===2.3
+
+
+This file contains installation-information for:
+project-name===si-packaging-for-linux
+def-version===1.0
+
+
+Project-specific remarks:
+For packaging of SI itself and 
+specifically the linux-version.
+
+Writes currently to a home-dir-path
+Non-used vars:
+servertarget=./packages_si/si_2.3_linux
+defsource=./test_projects/si_packaging
+===================================================
+
+
+
+VARIABLES TO SET
+comment: defaultly call enclosed in # like #var#
+arguments---separator=#
+target=/home/bruik/toep_gegs/snelinstaller/packages_si/si_2.3_linux
+>----------------------------------<
+DIRECTORIES TO CREATE
+your-comment-here
+arguments---none
+#target#
+#target#/help_info
+#target#/source_code
+#target#/test_projects/basic_sample/sources/demo_subdir
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+comment
+arguments---linux_set_exe=1
+#target#
+.
+snel_installer
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+comment
+arguments---none
+#target#/help_info
+..
+README.md
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+your-comment-here
+arguments---none
+#target#/help_info
+.
+faq_snel-installer.txt
+manual-snel-installer.txt
+terminal-output.txt
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+your-comment-here
+arguments---none
+#target#/source_code
+.
+jo_file_ops.nim
+snel_installer.nim
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+your-comment-here
+arguments---none
+#target#/test_projects/basic_sample
+test_projects/basic_sample
+basic-sample-01_install-def-si_2.3.txt
+basic-sample-02_install-def-si_2.3.txt
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+your-comment-here
+arguments---none
+#target#/test_projects/basic_sample/sources
+test_projects/basic_sample/sources
+some_config.txt
+some_config.txt.bak
+sourcefile01
+sourcefile02
+sourcefile05
+sourcefile06
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+your-comment-here
+arguments---none
+#target#/test_projects/basic_sample/sources/demo_subdir
+test_projects/basic_sample/sources/demo_subdir
+otherfile01
+otherfile02
+sourcefile03
+sourcefile04
+>----------------------------------<
+dis_EXECUTE SHELL-COMMANDS - IN ORDER
+your-comment-here
+arguments---none
+pwd
+>----------------------------------<
+dis_CALL OTHER INSTALLATIONS
+your-comment-here
+arguments---none
+#myproject#/basic-sample-02_install-def-si_2.3.txt
+>----------------------------------<
+#END-OF-BLOCKS
+
+

@@ -1,11 +1,12 @@
-Manual of Snel_installer - version 2.2
+Manual of Snel_installer - version 2.3
 
 
 HOW TU USE SnelInstaller
 
 Open a terminal and go to the place where 
-your snelinstaller-program lives. Type in 
-the following command:
+your snelinstaller-program lives
+(snel_installer or snel_installer.exe). 
+Type in the following command:
 
 ./snel_installer your-install-def.txt
 or the co-delivered sample-file:
@@ -62,9 +63,12 @@ The following lines are different for each block.
 Some info on specific blocks:
 
 A variable-block "VARIABLES TO SET" is added since SI 2.2 in which short 
-place-holders can be defined for long paths. See below for more explanation. 
-Variables are currently only supported for paths; maybe lateron it will be 
-done by substituting all the vars in the file before do any other handling.
+place-holders can be defined for long paths, but they can be used for any 
+purpose. The variables are substituted in the file before any other handling.
+
+In defining paths, it is always important to remember where the program 
+snel_installer(.exe) is located, because all paths depend on it. From the location 
+of the program forward it usually is best to use relative paths for all other files.
 
 The block "EDIT FILE (ADD, DELETE, REPLACE LINES)" has three possible
 operations: inserting lines, deleting lines and replacing a single line.
