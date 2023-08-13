@@ -1,0 +1,41 @@
+snel_installer definition-file for 
+si-version===2.2
+
+
+This file contains installation-information for:
+project-name===si-test-project-02
+def-version===1.2
+
+
+Project-specific remarks:
+Meant of sub-installation
+This is a test-config. 
+You need some dummy files
+to be copied. 
+2 source-files
+
+===================================================
+
+
+
+VARIABLES TO SET
+comment: defaultly call enclosed in # like #var#
+arguments---separator=#
+stal=installables
+>----------------------------------<
+DIRECTORIES TO CREATE
+your-comment-here
+arguments---none
+~/testing/testdoel1
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+your-comment-here
+arguments---none
+~/testing/testdoel1
+./#stal#
+otherfile01
+otherfile02
+>----------------------------------<
+#END-OF-BLOCKS
+
+
