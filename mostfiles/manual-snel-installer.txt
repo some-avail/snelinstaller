@@ -55,8 +55,11 @@ Currently supported arguments (second line of each block):
 - for block: VARIABLES TO SET
 the variable-separator (see below)
 - for block: TARGET-LOCATION AND SOURCE-FILES TO COPY
-linux_set_exe=1			enable executable bits for executable files in linux
-linux_use_sudo=1		use linux-admin rights (but then call also like: sudo snel_installer)
+linux_set_exe=1			  enable executable bits for executable files in linux
+linux_use_sudo=1		  use linux-admin rights (but then call also like: sudo snel_installer)
+copy_branch=1         copy a entire branch recursively
+sample_permissions=1  take the perms over from the source-branch (with branch-copy)
+
 
 The following lines are different for each block.
 
