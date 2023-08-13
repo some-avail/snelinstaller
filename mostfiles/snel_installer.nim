@@ -160,15 +160,16 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
     lastline: string
     all_argst: string
     argumentsq: seq[string] = @[]
-    linux_setexe: bool= false
-    linux_use_sudo: bool = false
+    linux_setexebo: bool= false
+    linux_use_sudobo: bool = false
     varsepst: string
     varsta = initTable[string, string]()
     varlinesq: seq[string] = @[]
     pathst: string
     linest: string
     lineit: int
-    
+    copybranchbo: bool = false
+    samplepermissionsbo: bool = false
 
   echo "\pCurrent directory: ", getAppDir()
 
@@ -225,7 +226,8 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
         # check for block-header
         if linest in blockheadar:
           blockphasest = linest
-          echo "\p" & blockphasest
+          if blockphasest != "VARIABLES TO SET":
+            echo "\p" & blockphasest
           blocklineit = 0
         elif linest != "":
         
@@ -255,39 +257,50 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
                   argumentsq = all_argst.split(",,")
                   #echo repr argumentsq
                   if jo_file_ops.getValueFromKey(argumentsq, "=", "linux_set_exe") == "1":
-                    echo "linux_set_exe = true"
-                    linux_setexe = true
+                    echo "linux_set_exebo = true"
+                    linux_setexebo = true
                   if jo_file_ops.getValueFromKey(argumentsq, "=", "linux_use_sudo") == "1":
-                    echo "linux_use_sudo = true"
-                    linux_use_sudo = true
+                    echo "linux_use_sudobo = true"
+                    linux_use_sudobo = true
+                  if jo_file_ops.getValueFromKey(argumentsq, "=", "copy_branch") == "1":
+                    echo "copybranchbo = true"
+                    copybranchbo = true
+                  if jo_file_ops.getValueFromKey(argumentsq, "=", "sample_permissions") == "1":
+                    echo "samplepermissionsbo = true"
+                    samplepermissionsbo = true
+
 
               elif blocklineit == 3:
                 targetdirpathst = expandTilde(linest)
               elif blocklineit == 4:
                 sourcedirpathst = expandTilde(linest)
+                if copybranchbo:
+                  copyDirWithStem(sourcedirpathst, targetdirpathst, samplepermissionsbo)
+                  echo "Copying branch: ", sourcedirpathst, " to: ", targetdirpathst
 
               else:
-                sourcefilest = linest
-                sourcefilepathst = joinPath(sourcedirpathst, sourcefilest)                
-                echo "copying: " & sourcefilepathst & "   to:   " & targetdirpathst
-                targetfilepathst = joinPath(targetdirpathst, sourcefilest)
-                if dirExists(targetdirpathst):
-                  if fileExists(sourcefilepathst):
-                    copyfile(sourcefilepathst,targetfilepathst)
-                    if linux_setexe:
-                      var prependst:string = ""
-                      if linux_use_sudo: prependst = "sudo "
-                      discard execShellCmd(prependst & "chmod +x " & targetfilepathst)
+                if not copybranchbo:
+                  sourcefilest = linest
+                  sourcefilepathst = joinPath(sourcedirpathst, sourcefilest)                
+                  echo "copying: " & sourcefilepathst & "   to:   " & targetdirpathst
+                  targetfilepathst = joinPath(targetdirpathst, sourcefilest)
+                  if dirExists(targetdirpathst):
+                    if fileExists(sourcefilepathst):
+                      copyfile(sourcefilepathst,targetfilepathst)
+                      if linux_setexebo:
+                        var prependst:string = ""
+                        if linux_use_sudobo: prependst = "sudo "
+                        discard execShellCmd(prependst & "chmod +x " & targetfilepathst)
+                    else:
+                      echo "The following file does not exist:\p", sourcefilepathst
+                      echo "Occured at def-line-nr: ", $lineit
+                      echo "\pInstallation ended prematurely!"
+                      quit(QuitSuccess)
                   else:
-                    echo "The following file does not exist:\p", sourcefilepathst
+                    echo "The following directory does not exist:\p", targetdirpathst
                     echo "Occured at def-line-nr: ", $lineit
                     echo "\pInstallation ended prematurely!"
                     quit(QuitSuccess)
-                else:
-                  echo "The following directory does not exist:\p", targetdirpathst
-                  echo "Occured at def-line-nr: ", $lineit
-                  echo "\pInstallation ended prematurely!"
-                  quit(QuitSuccess)
 
 
             elif blockphasest == "EDIT FILE (ADD, DELETE, REPLACE LINES)":
@@ -349,8 +362,10 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
             # then the former block is completed
             blockphasest = ""
             # set arguments to none:
-            linux_setexe = false
-            linux_use_sudo = false
+            linux_setexebo = false
+            linux_use_sudobo = false
+            copybranchbo = false
+            samplepermissionsbo = false
 
         lineit += 1
       

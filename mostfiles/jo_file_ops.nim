@@ -8,9 +8,8 @@
 #	2020-02-25      jo_file_ops.nim     see var   ndell-mint19
 
 
+import std/[os, strutils, dirs, files, private/osdirs, paths]
 
-import strutils
-import os
 
 var versionfl:float = 1.2
 
@@ -324,10 +323,37 @@ proc alterTextFile*(operationst, targetfilepathst, locating_stringst:string,
 # echo "jo_file_ops " & $(versionfl) & " is called..."
 
 
+
+proc myWalkDir(dirst: string) = 
+  for filest in walkDirRec(dirst, relative = true, yieldFilter = {pcDir}):
+    echo filest
+
+
+proc copyDirWithStem*(sourcedirst, tardirst: string, sample_permissionsbo = false) = 
+  # Recurrently copy sourcedirst to tardirst
+  # Copy also the stem-dir of the sourcedirst (aot copyDir)
+  # Keeps persmissions from source-tree
+
+  var 
+    dirstemst: string =  lastPathPart(sourcedirst)
+    newdirst: string = joinPath(tardirst, dirstemst)
+
+  createDir(newdirst)
+  if sample_permissionsbo:
+    copyDirWithPermissions(sourcedirst, newdirst)
+  else:
+    copyDir(sourcedirst, newdirst)
+
+
+
 when isMainModule:
   # pass
 
-  echo getValueFromKey(@["jan-pieters", "wim-jansen"], "-", "janus")
+  # myWalkDir(getAppDir())
+
+  copyDirWithStem("/home/bruik/testing/testdoel1", "/home/bruik/testing/doel")
+
+  # echo getValueFromKey(@["jan-pieters", "wim-jansen"], "-", "janus")
 
 # test searchNthSubInString
 #var posit : int = 0

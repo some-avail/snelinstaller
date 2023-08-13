@@ -25,10 +25,12 @@ arguments---separator=#
 target=/home/bruik/toep_gegs/snelinstaller/packages_si/si_2.3_linux
 >----------------------------------<
 DIRECTORIES TO CREATE
-comment: from 2.3 onward all super-dirs are co-created
+your-comment-here
 arguments---none
+#target#
 #target#/help_info
 #target#/source_code
+#target#/test_projects/basic_sample/sources/demo_subdir
 >----------------------------------<
 TARGET-LOCATION AND SOURCE-FILES TO COPY
 comment
@@ -63,9 +65,33 @@ snel_installer.nim
 >----------------------------------<
 TARGET-LOCATION AND SOURCE-FILES TO COPY
 your-comment-here
-arguments---copy_branch=1,,sample_permissions=0
-#target#/test_projects
+arguments---none
+#target#/test_projects/basic_sample
 test_projects/basic_sample
+basic-sample-01_install-def-si_2.3.txt
+basic-sample-02_install-def-si_2.3.txt
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+your-comment-here
+arguments---none
+#target#/test_projects/basic_sample/sources
+test_projects/basic_sample/sources
+some_config.txt
+some_config.txt.bak
+sourcefile01
+sourcefile02
+sourcefile05
+sourcefile06
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+your-comment-here
+arguments---none
+#target#/test_projects/basic_sample/sources/demo_subdir
+test_projects/basic_sample/sources/demo_subdir
+otherfile01
+otherfile02
+sourcefile03
+sourcefile04
 >----------------------------------<
 dis_EXECUTE SHELL-COMMANDS - IN ORDER
 your-comment-here

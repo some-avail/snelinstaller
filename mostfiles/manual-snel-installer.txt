@@ -119,8 +119,8 @@ arguments---none (default is none, above you see available args)
 (but home-dir sign (~) is filled in automatically) or with 
 help of variables. The vars must -while calling- be surrounded 
 by the var-separator, defaultly #.
-(all subdirs must be created separately; 
-if dirs allready exist the creation is skipped): sample-list
+(from 2.3 onward all super-dirs are co-created; that means when
+dir a and b dont exist yet, "a/b" creates them both); sample-list
 #varname1#
 #varname2#
 ~/some-path-in-the-home-dir
@@ -134,9 +134,11 @@ arguments---none
 source-location and to be copied to the above target-location.
 >----------------------------------<
 TARGET-LOCATION AND SOURCE-FILES TO COPY
-your-comment-here
-arguments---none
-and so many as neccessary
+comment: You can copy a full branch aswell since SI 2.3
+arguments---copy_branch=1,,sample_permissions=1
+-target-location-path (all paths can have tildes or path-vars)
+-source-location-path (this line new since SI 2.1)
+No files are needed here
 >----------------------------------<
 EDIT FILE (ADD, DELETE, REPLACE LINES)
 your-comment-here
