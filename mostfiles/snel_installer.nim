@@ -314,13 +314,15 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
               elif blocklineit == 2:
                 # handle arguments
                 discard      
-              elif blocklineit in 3..8:
+              elif blocklineit in 3..8:     # read the fixed parameters (x7)
                 editfileprops[blocklineit - 3]=linest
                 if blocklineit == 4:
                   pathst = expandTilde(linest)
                   echo pathst
-              elif blocklineit > 8:
-                if linest == "end-of-edit-block-here":
+              elif blocklineit > 8:     # read the dynamic parameters
+                if linest != "end-of-edit-block-here":
+                  ops_paramsq.add(linest)
+                else:
                   jo_file_ops.alterTextFile(
                         operationst = editfileprops[0],
                         targetfilepathst = pathst, 
@@ -330,9 +332,6 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
                         directionst = editfileprops[2],
                         operationparamsq = ops_paramsq)
                   echo "\p" & editfileprops[0] & " performed on: " & pathst & "\p"
-
-                else:
-                  ops_paramsq.add(linest)
 
 
             elif blockphasest == "EXECUTE SHELL-COMMANDS - IN ORDER":

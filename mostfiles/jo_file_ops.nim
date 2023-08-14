@@ -11,8 +11,15 @@
 import std/[os, strutils, dirs, files, private/osdirs, paths]
 
 
-var versionfl:float = 1.2
+var versionfl:float = 1.3
 
+# var debugbo: bool = true
+var debugbo: bool = true
+
+template log(messagest: string) =
+  # replacement for echo that is only evaluated when debugbo = true
+  if debugbo: 
+    echo messagest
 
 
 proc searchNthSubInString(stringst,subst:string,occurit:int, 
@@ -88,77 +95,6 @@ proc getValueFromKey*(allargsq:seq[string], separatorst, keyst:string): string =
       return ivaluest
   
   
-  
-proc insertTextInFile*(targetfilepathst, locating_methodst, 
-          locating_stringst:string, occurit: int,
-          directionst:string,
-          insertionssq:seq[string]) =
-  #[
-  UNIT INFO:
-  Insert lines of text (insertionssq)in a text-file (targetfile).
-  Use a locating-string to determine the insertion-point. The 
-  locating-method indicates before or after the loc-string-point.
-  Loc-string is found by searching in certain direction (forward or
-  backward) and determining the wished occurence of the 
-  search-string.
-  ]#
-
-  var 
-    backupfile: File
-    backupfilepathst: string
-    positionit: int
-    # filets: TaintedString
-    filets: string
-    filecontentst:string
-    insertionpointit:int
-  
-  # quit if file non-existant
-  if not fileExists(targetfilepathst):
-    echo "\pFollowing file does not exist: " & targetfilepathst
-    echo "Exiting function insertTextInFile..."
-    quit(QuitSuccess)
-  
-  # backup the target-file
-  backupfilepathst = backupFile(targetfilepathst)
-   
-  # open the backup-file
-  if open(backupfile, backupfilepathst): 
-    try:
-      filets = readAll(backupfile)
-      filecontentst = $filets
-      #echo filecontentst
-
-    except:
-      echo "=========er ging iets mis=========="
-      raise
-  else:
-    echo "Could not open target-file!"
-
-  defer: backupfile.close()
-  
-  # go to the file-location where to insert line(s)
-  positionit = searchNthSubInString(filecontentst, locating_stringst, occurit,
-                    directionst)
-
-  echo "Locating-string found at: " & $positionit
-  
-  case locating_methodst
-  of "before":
-    insertionpointit = positionit    
-    for elem in insertionssq:
-      filecontentst.insert(elem & "\p", insertionpointit)
-      insertionpointit += len(elem) + 1
-      
-  of "after":
-    insertionpointit = positionit + len(locating_stringst)
-    for elem in insertionssq:
-      filecontentst.insert("\p" & elem, insertionpointit)
-      insertionpointit += len(elem) + 1
-  else: discard
-
-  #echo filecontentst
-  
-  writeFile(targetfilepathst, filecontentst)
 
   
   
@@ -181,6 +117,8 @@ proc alterTextFile*(operationst, targetfilepathst, locating_stringst:string,
   replacement-params: strings to-replace and replace-to
   
   ]#
+  log("locating_stringst = " & locating_stringst)
+  log("\poperationparamsq = " & $operationparamsq)
 
   var 
     backupfile: File
@@ -219,7 +157,7 @@ proc alterTextFile*(operationst, targetfilepathst, locating_stringst:string,
   positionit = searchNthSubInString(filecontentst, locating_stringst, occurit,
                     directionst)
 
-  echo "Locating-string found at: " & $positionit
+  echo "Locating-string found at character-position : " & $positionit
   
   
   # Full line-operations expect the locating-string starting at
@@ -230,11 +168,12 @@ proc alterTextFile*(operationst, targetfilepathst, locating_stringst:string,
   
   case operationst    # concerning lines
   of "insertions":
-  
+    log("entering insertions..")
     case line_orientationst
     of "before":
-      insertionpointit = searchNthSubInString(filecontentst, "\p",
+      insertionpointit = searchNthSubInString(filecontentst, "\n",
               1, "backward", positionit) + 1      
+      log("insertionpointit = " & $insertionpointit)
 
       for elem in operationparamsq:
         filecontentst.insert(elem & "\p", insertionpointit)
@@ -244,48 +183,53 @@ proc alterTextFile*(operationst, targetfilepathst, locating_stringst:string,
       filecontentst.insert(operationparamsq[0], positionit)
   
     of "after":
-      insertionpointit = searchNthSubInString(filecontentst, "\p",
-              1, "forward", positionit)         
+      insertionpointit = searchNthSubInString(filecontentst, "\n",
+              1, "forward", positionit)
+      log("insertionpointit = " & $insertionpointit)
+
       for elem in operationparamsq:
         filecontentst.insert("\p" & elem, insertionpointit)
         insertionpointit += len(elem) + 1
     else: discard
 
   of "deletions":
-    
+    log("entering deletions..")
     var numberoflinesit:int = parseint(operationparamsq[0])
 
     case line_orientationst
     of "on":
       #echo "orient = on"
-      startposit = searchNthSubInString(filecontentst, "\p",
+      startposit = searchNthSubInString(filecontentst, "\n",
               1, "backward", positionit) + 1      
-      endposit = searchNthSubInString(filecontentst, "\p",
+      endposit = searchNthSubInString(filecontentst, "\n",
             numberoflinesit, "forward", positionit)
+      log("startposit and endposit: " & $startposit & "  " & $endposit)
       filecontentst.delete(startposit..endposit)
       
     of "after":
       #echo "orient = after"
-      startposit = searchNthSubInString(filecontentst, "\p",
+      startposit = searchNthSubInString(filecontentst, "\n",
             1, "forward", positionit) + 1
       echo "startposit =" & $startposit
-      endposit = searchNthSubInString(filecontentst, "\p",
+      endposit = searchNthSubInString(filecontentst, "\n",
             numberoflinesit + 1, "forward", positionit)
       echo "endposit = " & $endposit
       filecontentst.delete(startposit..endposit)
       
     of "before":
       #echo "orient = before"
-      endposit = searchNthSubInString(filecontentst, "\p",
+      endposit = searchNthSubInString(filecontentst, "\n",
               1, "backward", positionit)
-      startposit = searchNthSubInString(filecontentst, "\p",
+      startposit = searchNthSubInString(filecontentst, "\n",
             numberoflinesit + 1, "backward", positionit) + 1
+      log("startposit and endposit: " & $startposit & "  " & $endposit)
+
       filecontentst.delete(startposit..endposit)
 
 
   of "replacement":
   
-    #echo "entering replacement"
+    log("entering replacement..")
     var currentlinest:string
     var replacedlinest: string
     var to_replacest: string = operationparamsq[0]
@@ -293,24 +237,24 @@ proc alterTextFile*(operationst, targetfilepathst, locating_stringst:string,
   
   
     # seek previous line-marker
-    startposit = searchNthSubInString(filecontentst, "\p",
+    startposit = searchNthSubInString(filecontentst, "\n",
             1, "backward", positionit) + 1
-    #echo "startposit = " & $startposit
+    log("startposit = " & $startposit)
     
     # seek next line-marker
-    endposit = searchNthSubInString(filecontentst, "\p",
+    endposit = searchNthSubInString(filecontentst, "\n",
             1, "forward", positionit)
-    #echo "endposit = " & $endposit
+    log("endposit = " & $endposit)
     # copy the current line
     currentlinest = filecontentst[startposit .. endposit]
-    #echo "currentlinest = " & currentlinest
+    log("currentlinest = " & currentlinest)
     # delete the current line
     filecontentst.delete(startposit..endposit)
-    #echo "to-repl =" & to_replacest
-    #echo "rep-to =" & replace_tost
+    log("to-repl =" & to_replacest)
+    log("rep-to =" & replace_tost)
     # replace the current line
     replacedlinest = currentlinest.replace(to_replacest, replace_tost)
-    #echo "repl.linest = " & replacedlinest
+    log("repl.linest = " & replacedlinest)
     # insert the replaced line
     filecontentst.insert(replacedlinest, startposit)
 
