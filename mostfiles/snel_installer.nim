@@ -304,6 +304,7 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
 
 
             elif blockphasest == "EDIT FILE (ADD, DELETE, REPLACE LINES)":
+
               #echo "----edit-test----"
               #echo blocklineit
               if blocklineit != 4: 
@@ -358,8 +359,9 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
                 discard execShellCmd(getAppFilename() & " " & linest & " --level:" & $(call_levelit + 1))
             
           else:
-            # then the former block is completed
+            # when the former block is completed
             blockphasest = ""
+            ops_paramsq = @[]     # reset dynamic params
             # set arguments to none:
             linux_setexebo = false
             linux_use_sudobo = false

@@ -210,12 +210,12 @@ proc alterTextFile*(operationst, targetfilepathst, locating_stringst:string,
       #echo "orient = after"
       startposit = searchNthSubInString(filecontentst, "\n",
             1, "forward", positionit) + 1
-      echo "startposit =" & $startposit
+      log("startposit =" & $startposit)
       endposit = searchNthSubInString(filecontentst, "\n",
             numberoflinesit + 1, "forward", positionit)
-      echo "endposit = " & $endposit
+      log("endposit = " & $endposit)
       filecontentst.delete(startposit..endposit)
-      
+    
     of "before":
       #echo "orient = before"
       endposit = searchNthSubInString(filecontentst, "\n",
@@ -228,7 +228,7 @@ proc alterTextFile*(operationst, targetfilepathst, locating_stringst:string,
 
 
   of "replacement":
-  
+    # replacement allways has orientation: on
     log("entering replacement..")
     var currentlinest:string
     var replacedlinest: string

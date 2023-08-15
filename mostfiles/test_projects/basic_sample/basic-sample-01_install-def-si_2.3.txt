@@ -64,11 +64,12 @@ forward
 the search-string
 after
 command1
-
 command2
+command3
+command4
 end-of-edit-block-here
 >----------------------------------<
-disable_EDIT FILE (ADD, DELETE, REPLACE LINES)
+EDIT FILE (ADD, DELETE, REPLACE LINES)
 Delete 3 lines after the search-string.
 arguments---none
 deletions
@@ -80,7 +81,7 @@ after
 3
 end-of-edit-block-here
 >----------------------------------<
-disable_EDIT FILE (ADD, DELETE, REPLACE LINES)
+EDIT FILE (ADD, DELETE, REPLACE LINES)
 with replacement line-orientation must be: on
 arguments---none
 replacement

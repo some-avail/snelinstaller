@@ -2,19 +2,19 @@
 
 SnelInstaller (SI) is text-based program meant to easify the creation of installation-packages. For example you can easily create a .deb package (once you've created a definition), or the preparation of a windows-setup. However it is not like Inno-setup, but once you have created an Inno-setup, you can update the Inno-setup-definitions automatically using SnelInstaller.
 
-With SI you can create dirs, copy files, edit files and executes commands automatically, that is, based on a install-definition-file. You are not limited to any specific programming-langage or environment. Besides installation-packages it can be helpfull in creating any computer-confugration for example to customize a standard-computer to the needs of an organisation. It can even be helping in the creation of a Linux-distribution.
+With SI you can create dirs, copy files, edit files (for now linux-only) and execute commands automatically, that is, based on a install-definition-file. Also you can call other installations / def-files. You are not limited to any specific programming-langage or environment. Besides installation-packages it can be helpfull in creating any computer-configuration for example to customize a standard-computer to the needs of an organisation. It can even be helping in the creation of a Linux-distribution.
 
 Features:
 - simplicity; easy-to-understand definition-files do the trick, and the manual is compact.
 - variables can be defined for file-handling, especially usable for paths, to avoid repetitive input of long paths.
 - flexibility; because of recurrency, one def-file can call one or more other ones, and so on..
-- multi-platform; for now windows and linux versions are forseen, but other target-platforms are possible.
 
 
-SnelInstaller is written in the State-of-the-art programming-language Nim; a modern, compiled, garbage-collected language with Python-like syntax.
+SnelInstaller is written in the advanced programming-language Nim; a modern, compiled, garbage-collected language with Python-like syntax.
 
-For now it only has been tested on linux, but is expected to run on Windows. Packages / release still have to be uploaded, so currently it only is usable for Nim-developers, instead of regular users. Also a windows-version is foreseen. Releases for both OSs are forth-coming.
+SI has been developped on / and released for Linux (which I use obviously) but I have tested it on Windows aswell. However, it failed on the edit-file-function, the reason being differences in line-endings. The other functions work OK though, which is about 85 %. Therefore I have published a windows-release as a beta-program. If there is interest, I may put time in adapting the edit-function for windows. (or generalizing it: some sort of line-ending detection would be necessary?).
 
+Anyway, succes with trying out SnelInstaller.
 
 
 [Go to Sample-definition-file] (https://github.com/some-avail/snelinstaller/blob/main/mostfiles/test_projects/basic_sample/basic-sample-01_install-def-si_2.3.txt)
