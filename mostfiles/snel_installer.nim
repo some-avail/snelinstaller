@@ -4,8 +4,8 @@
 # source-scripts: none
 # author: joris bollen
 # script-type: nim
-#	birth-date      prog.name				version   update-machine
-#	2020-02-13      snel_installer.nim  see var   ndell-mint19
+#	birth-date      prog.name				     version   update-machine
+#	2020-02-13      snel_installer.nim   see var   ndell-mint19
 
 
 # script-operation:
@@ -13,29 +13,14 @@
 # uses installation-definition-file in which sources and targets are placed
 # ---------------------------------------------------
 # Format of the installation-definition-file (def-file):
-# it contains multiple blocks starting with specific tasks:
-# DIRECTORIES TO CREATE
-# TARGET-LOCATION AND SOURCE-FILES TO COPY
-# EDIT FILE (ADD, DELETE, REPLACE LINES)
-# EXECUTE SHELL-COMMANDS - IN ORDER
+# it contains multiple blocks starting with specific tasks
+# see manual for more info.
 
 
-# Please consult the def-file for addional info.
+# Please consult the def-file for project-specific info.
 # ----------------------------------------------------
 
 # ADAP HIS
-# implement exception-handling
-# substitute another separator-line between blocks instead of empty line
-  # like >----------------------------------<
-  # so that empty lines can be added to config files
-# add command-section
-# add an arguments-line,for:
-  # linux:set_exe
-# add one comment-line per block
-# extend EDIT-block with additional options:
-  # remove a line
-  # prepend a string before a line (like commenting)
-  # replace a line
 
 
 # ADAP NOW
@@ -64,7 +49,7 @@
 
 
 var 
-  versionfl:float = 2.3
+  versionfl:float = 2.41
   ask_confirmationbo: bool = true
 
   arg_def_filest: string
@@ -108,7 +93,7 @@ proc confirmInstall(askbo: bool): bool =
 
 
 
-proc expandVars(inputst, varsepst: string, variableta: var Table[string, string]): string = 
+proc expandVars(inputst, varsepst: string, variableta: OrderedTable[string, string]): string = 
   #[
     Substitute in inputst all the vars surrounded by varsepst based on the
     key-value-list in variableta 
@@ -124,6 +109,26 @@ proc expandVars(inputst, varsepst: string, variableta: var Table[string, string]
       tekst = tekst.replace(fullkeyst, valst)
 
   result = tekst
+
+
+
+proc updateVarUsageTable(inputst, varsepst: string, variableta: OrderedTable[string, string], 
+                  varusageta: var OrderedTable[string, bool]) = 
+  #[
+    Substitute in inputst all the vars surrounded by varsepst based on the
+    key-value-list in variableta 
+  ]#
+
+  var 
+    fullkeyst: string
+
+  # echo varusageta
+
+  for keyst in variableta.keys:
+    fullkeyst = varsepst & keyst & varsepst
+    if fullkeyst in inputst:
+      varusageta[keyst] = true
+      # echo "-----varusage---- ", fullkeyst, "      ", inputst
 
 
 
@@ -163,13 +168,16 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
     linux_setexebo: bool= false
     linux_use_sudobo: bool = false
     varsepst: string
-    varsta = initTable[string, string]()
+    varsta = initOrderedTable[string, string]()
+    var_usageta = initOrderedTable[string, bool]()
     varlinesq: seq[string] = @[]
     pathst: string
     linest: string
     lineit: int
     copybranchbo: bool = false
     samplepermissionsbo: bool = false
+    reportst: string
+
 
   echo "\pCurrent directory: ", getAppDir()
 
@@ -188,7 +196,8 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
         # check for block-header
         if line in blockheadar:
           blockphasest = line
-          echo "\p" & blockphasest
+          if blockphasest == "VARIABLES TO SET":
+            echo "\p" & blockphasest
           blocklineit = 0
         elif line != "":
         
@@ -204,12 +213,46 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
                 varsepst = all_argst.split("=")[1]
               else:
                 varlinesq = line.split("=")
+                # fill the variable-table
                 varsta[varlinesq[0]] = varlinesq[1]
+                # preset the var-usage-table to false (later to be tested)
+                var_usageta[varlinesq[0]] = false
                 echo line
+
+            elif blockphasest != "":
+              # use this part for scan of variable-usage
+              updateVarUsageTable(line, varsepst, varsta, var_usageta)
+
           else:
             # then the former block is completed
             blockphasest = ""
-            break
+
+
+      # update the nested-var usage
+      for keyst, valst in varsta:
+        updateVarUsageTable(valst, varsepst, varsta, var_usageta)        
+
+      # substitute the var-table itself for nested vars and echo a report if present
+      var newvalst: string
+      for keyst, valst in varsta:
+        newvalst = expandVars(valst, varsepst, varsta)
+        varsta[keyst] = newvalst
+        if valst != newvalst:
+          reportst &= "\p" & keyst & ": " & newvalst
+
+      if reportst != "":
+        echo "\pVariables with nested vars:" & reportst
+
+
+      # echo non-used vars if present
+      reportst = ""
+      for keyst, valst in varsta:
+        if var_usageta[keyst] == false:
+          reportst &= "\p" &  keyst & ": " & valst
+
+      if reportst != "":
+        echo "\pThese variables are never used:" & reportst
+
 
 
       # walk thru the lines of the file
@@ -476,7 +519,7 @@ else:   # perform tests
 
   # proc expandVars
   var 
-    varsta = initTable[string, string]()
+    varsta = initOrderedTable[string, string]()
     inputst = "i am #tes# the #stal# files"
   
   varsta["stal"] = "installable"

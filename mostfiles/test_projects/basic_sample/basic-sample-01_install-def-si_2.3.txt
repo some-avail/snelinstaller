@@ -21,6 +21,8 @@ VARIABLES TO SET
 comment: defaultly call enclosed in # like #var#
 arguments---separator=#
 myproject=./test_projects/basic_sample
+nested_var=little_nest
+using_nested_var=i have a #nested_var# in this var
 >----------------------------------<
 DIRECTORIES TO CREATE
 your-comment-here

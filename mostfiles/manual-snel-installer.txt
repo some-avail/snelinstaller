@@ -67,7 +67,10 @@ Some info on specific blocks:
 
 A variable-block "VARIABLES TO SET" is added since SI 2.2 in which short 
 place-holders can be defined for long paths, but they can be used for any 
-purpose. The variables are substituted in the file before any other handling.
+purpose. The variables are substituted in the file before any other handling. 
+Since SI 2.4 one can nest vars in vars (one level only). For example:
+version=3.2
+installer=/somedir#version#/install  >becomes>   /somedir3.2/install
 
 In defining paths, it is always important to remember where the program 
 snel_installer(.exe) is located, because all paths depend on it. From the location 
@@ -111,8 +114,9 @@ right behind the variables-to-set.
 VARIABLES TO SET
 your-comment-here
 arguments---separator=#
-varname1=/some-long/path
-varname2=/another/long/path
+version=2.6
+pathname1=/some-long/path/#version#
+pathname2=/another/long/path
 
 
 DIRECTORIES TO CREATE

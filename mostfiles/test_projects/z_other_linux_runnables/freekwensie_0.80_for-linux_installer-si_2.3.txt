@@ -1,0 +1,141 @@
+snel_installer definition-file for 
+si-version===2.3
+
+
+This file contains installation-information for:
+project-name===freekwensie 0.80 for-linux
+destination===freek_packages
+def-version===1.1
+
+
+Project-specific remarks:
+
+Writes currently to a home-dir-path -see vars
+installer-location: /media/OnsSpul/1klein/1joris/k1-onderwerpen/computer/Programmeren/nimtaal/jester/freekwensie/mostfiles
+===================================================
+
+
+
+VARIABLES TO SET
+comment: if needy update the below versions from x.y to your own version
+arguments---separator=#
+target=/home/bruik/toepassingen/freekwensie/freek_packages/fkw_0.80
+archive=/home/bruik/toepassingen/freekwensie/freek_packages/freekwensie_0.80.tar.gz
+dirbasename=fkw_0.80
+>----------------------------------<
+DIRECTORIES TO CREATE
+comment: from 2.3 onward all super-dirs are co-created
+arguments---none
+#target#/sourcecode
+#target#/public
+#target#/help_info
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+comment
+arguments---linux_set_exe=1
+#target#
+.
+freek_startup
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+comment
+arguments---none
+#target#
+.
+freek.db
+freek_gui02.json
+freek_gui03.json
+freek_gui.json
+freek_inner02.html
+freek_inner03.html
+freek_inner.html
+freek_outer.html
+freek_settings.conf
+noise_sources_dutch_generic.dat
+noise_sources_english_generic.dat
+noise_sources_german_generic.dat
+noise_words_dutch_generic.dat
+noise_words_english_generic.dat
+noise_words_german_generic.dat
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+your-comment-here
+arguments---none
+#target#/sourcecode
+.
+freek_loadjson.nim
+freek_logic.nim
+freek_startup.nim
+g_cookie.nim
+g_database.nim
+g_db2json.nim
+g_disk2nim.nim
+g_html_json.nim
+g_json_plus.nim
+g_mine.nim
+g_nim2json.nim
+g_options.nim
+g_templates.nim
+g_tools.nim
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+your-comment-here
+arguments---none
+#target#/public
+./public
+freek_sheet02.css
+freek_sheet03.css
+freek_sheet.css
+freek_script02.js
+freek_script03.js
+freek_script.js
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+your-comment-here
+arguments---none
+#target#/help_info
+.
+readme_fkw.txt
+whatsnew_fkw.txt
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+your-comment-here
+arguments---none
+#target#/help_info
+..
+README.md
+>----------------------------------<
+EDIT FILE (ADD, DELETE, REPLACE LINES)
+comment: enable the user-port
+arguments---none
+replacement
+#target#/freek_settings.conf
+forward
+1
+port-number___5200
+on
+#port-number
+port-number
+end-of-edit-block-here
+>----------------------------------<
+EDIT FILE (ADD, DELETE, REPLACE LINES)
+comment: disable the developper-port
+arguments---none
+replacement
+#target#/freek_settings.conf
+forward
+1
+port-number___5180
+on
+port-number
+#port-number
+end-of-edit-block-here
+>----------------------------------<
+EXECUTE SHELL-COMMANDS - IN ORDER
+comment: create a tar.gz-archive; -C changes dir to avoid absolute paths
+arguments---none
+tar cfz #archive# -C #target#/.. #dirbasename#
+>----------------------------------<
+#END-OF-BLOCKS
+
+
