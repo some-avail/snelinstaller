@@ -1,0 +1,78 @@
+snel_installer definition-file for 
+si-version===2.4
+
+
+This file contains installation-information for:
+project-name===si-packaging-for-linux
+def-version===1.0
+
+
+Project-specific remarks:
+For packaging of SI itself and 
+specifically the linux-version.
+
+Writes currently to a home-dir-path
+===================================================
+
+
+
+VARIABLES TO SET
+comment: defaultly call enclosed in # like #var#
+arguments---separator=#
+version=2.41
+target=/home/bruik/toep_gegs/snelinstaller/packages_si/snelinstaller_#version#_linux
+archive=/home/bruik/toep_gegs/snelinstaller/packages_si/snelinstaller_#version#_linux.tar.gz
+dirbasename=snelinstaller_#version#_linux
+>----------------------------------<
+DIRECTORIES TO CREATE
+comment: from 2.3 onward all super-dirs are co-created
+arguments---none
+#target#/help_info
+#target#/source_code
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+comment
+arguments---linux_set_exe=1
+#target#
+.
+snel_installer
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+comment
+arguments---none
+#target#/help_info
+..
+README.md
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+your-comment-here
+arguments---none
+#target#/help_info
+.
+faq_snel-installer.txt
+manual-snel-installer.txt
+terminal-output.txt
+what-is-new.txt
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+your-comment-here
+arguments---none
+#target#/source_code
+.
+jo_file_ops.nim
+snel_installer.nim
+>----------------------------------<
+TARGET-LOCATION AND SOURCE-FILES TO COPY
+your-comment-here
+arguments---copy_branch=1,,sample_permissions=0
+#target#/test_projects
+test_projects/basic_sample
+>----------------------------------<
+EXECUTE SHELL-COMMANDS - IN ORDER
+comment: create a tar.gz-archive; -C changes dir to avoid absolute paths
+arguments---none
+tar cfz #archive# -C #target#/.. #dirbasename#
+>----------------------------------<
+#END-OF-BLOCKS
+
+

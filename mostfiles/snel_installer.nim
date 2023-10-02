@@ -115,8 +115,7 @@ proc expandVars(inputst, varsepst: string, variableta: OrderedTable[string, stri
 proc updateVarUsageTable(inputst, varsepst: string, variableta: OrderedTable[string, string], 
                   varusageta: var OrderedTable[string, bool]) = 
   #[
-    Substitute in inputst all the vars surrounded by varsepst based on the
-    key-value-list in variableta 
+    Update the var-usage-table varusageta if the fullkey is found in the inputst.
   ]#
 
   var 

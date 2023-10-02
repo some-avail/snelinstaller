@@ -1,12 +1,11 @@
-Running command:
-./snel_installer ./test_projects/basic_sample/basic-sample-01_install-def-si_2.3.txt
-gives output:
-
+Running:
+ ./snel_installer test_projects/basic_sample/basic-sample-01_install-def-si_2.4.txt
+gives:
 
 Call-level = 0
 
 ===============================
-Program Snel_Installer 2.3 is running...
+Program Snel_Installer 2.41 is running...
 Make sure to run snel_installer with sufficient rights.
 Do you want to continue? (y/n)
 y
@@ -14,26 +13,31 @@ continuing...
 
 Current directory: /media/OnsSpul/1klein/1joris/k1-onderwerpen/computer/Programmeren/nimtaal/snelinstaller/mostfiles
 
-Trying to open file: ./test_projects/basic_sample/basic-sample-01_install-def-si_2.3.txt
+Trying to open file: test_projects/basic_sample/basic-sample-01_install-def-si_2.4.txt
 
 
 =====Begin processing====
 
 VARIABLES TO SET
 myproject=./test_projects/basic_sample
+lversion=2.4
+nested_var=little_nest
+using_nested_var=i have a #nested_var# in this var
+
+Variables with nested vars:
+using_nested_var: i have a little_nest in this var
+
+These variables are never used:
+using_nested_var: i have a little_nest in this var
 
 DIRECTORIES TO CREATE
-creating directory: ./test_projects/basic_sample/targetdir
-creating directory: ./test_projects/basic_sample/targetdir/targ1
-creating directory: ./test_projects/basic_sample/targetdir/targ2
-creating directory: ./test_projects/basic_sample/targetdir/targ3
 
 TARGET-LOCATION AND SOURCE-FILES TO COPY
 copying: test_projects/basic_sample/sources/sourcefile01   to:   ./test_projects/basic_sample/targetdir/targ1
 copying: test_projects/basic_sample/sources/sourcefile02   to:   ./test_projects/basic_sample/targetdir/targ1
 
 TARGET-LOCATION AND SOURCE-FILES TO COPY
-linux_set_exe = true
+linux_set_exebo = true
 copying: test_projects/basic_sample/sources/demo_subdir/sourcefile03   to:   ./test_projects/basic_sample/targetdir/targ2
 copying: test_projects/basic_sample/sources/demo_subdir/sourcefile04   to:   ./test_projects/basic_sample/targetdir/targ2
 
@@ -52,10 +56,68 @@ the search-string
 after
 command1
 command2
+command3
+command4
 end-of-edit-block-here
-Locating-string found at: 47
+locating_stringst = the search-string
+
+operationparamsq = @["command1", "command2", "command3", "command4"]
+Locating-string found at character-position : 51
+entering insertions..
+insertionpointit = 101
 
 insertions performed on: ./test_projects/basic_sample/sources/some_config.txt
+
+
+EDIT FILE (ADD, DELETE, REPLACE LINES)
+Delete 3 lines after the search-string.
+arguments---none
+deletions
+./test_projects/basic_sample/sources/some_config.txt
+forward
+1
+the search-string
+after
+3
+end-of-edit-block-here
+locating_stringst = the search-string
+
+operationparamsq = @["3"]
+Locating-string found at character-position : 51
+entering deletions..
+startposit =102
+endposit = 128
+
+deletions performed on: ./test_projects/basic_sample/sources/some_config.txt
+
+
+EDIT FILE (ADD, DELETE, REPLACE LINES)
+with replacement line-orientation must be: on
+arguments---none
+replacement
+./test_projects/basic_sample/sources/some_config.txt
+forward
+1
+the search-string
+on
+oldtext
+newtext
+end-of-edit-block-here
+locating_stringst = the search-string
+
+operationparamsq = @["oldtext", "newtext"]
+Locating-string found at character-position : 51
+entering replacement..
+startposit = 43
+endposit = 101
+currentlinest = Here is the search-string which holds the newtext and more
+
+to-repl =oldtext
+rep-to =newtext
+repl.linest = Here is the search-string which holds the newtext and more
+
+
+replacement performed on: ./test_projects/basic_sample/sources/some_config.txt
 
 
 EXECUTE SHELL-COMMANDS - IN ORDER
@@ -64,17 +126,17 @@ Running command: pwd
 
 CALL OTHER INSTALLATIONS
 *********************************************************************
-Executing subordinate installation seq. nr. 1: ./test_projects/basic_sample/basic-sample-02_install-def-si_2.3.txt
+Executing subordinate installation seq. nr. 1: ./test_projects/basic_sample/basic-sample-02_install-def-si_2.4.txt
 *********************************************************************
 Call-level = 1
 
 ===============================
-Program Snel_Installer 2.3 is running...
+Program Snel_Installer 2.41 is running...
 Make sure to run snel_installer with sufficient rights.
 
 Current directory: /media/OnsSpul/1klein/1joris/k1-onderwerpen/computer/Programmeren/nimtaal/snelinstaller/mostfiles
 
-Trying to open file: ./test_projects/basic_sample/basic-sample-02_install-def-si_2.3.txt
+Trying to open file: ./test_projects/basic_sample/basic-sample-02_install-def-si_2.4.txt
 
 
 =====Begin processing====
