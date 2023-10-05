@@ -11,7 +11,7 @@
 import std/[os, strutils, dirs, files, private/osdirs, paths]
 
 
-var versionfl:float = 1.3
+var versionfl:float = 1.5
 
 # var debugbo: bool = true
 var debugbo: bool = true
@@ -115,10 +115,8 @@ proc alterTextFile*(operationst, targetfilepathst, locating_stringst:string,
   insertions-params; a sequence of strings that form the new lines.
   deletions-params: a number of lines to be erased.
   replacement-params: strings to-replace and replace-to
-  
   ]#
-  log("locating_stringst = " & locating_stringst)
-  log("\poperationparamsq = " & $operationparamsq)
+
 
   var 
     backupfile: File
@@ -128,12 +126,18 @@ proc alterTextFile*(operationst, targetfilepathst, locating_stringst:string,
     filets: string
     filecontentst:string
     insertionpointit:int
+    enteredbo: bool = false
+
   
   # quit if file non-existant
   if not fileExists(targetfilepathst):
     echo "\pFollowing file does not exist: " & targetfilepathst
-    echo "Exiting function insertTextInFile..."
+    echo "Exiting function alterTextFile..."
     quit(QuitSuccess)
+
+  log("\poperation = " & operationst)
+  log("locating_string = " & locating_stringst)
+  log("operationparamsq = " & $operationparamsq)
 
   # backup the target-file
   backupfilepathst = backupFile(targetfilepathst)
@@ -157,7 +161,7 @@ proc alterTextFile*(operationst, targetfilepathst, locating_stringst:string,
   positionit = searchNthSubInString(filecontentst, locating_stringst, occurit,
                     directionst)
 
-  echo "Locating-string found at character-position : " & $positionit
+  echo "Locating-string found at character-position (-1 = not found): " & $positionit
   
   
   # Full line-operations expect the locating-string starting at
@@ -165,104 +169,129 @@ proc alterTextFile*(operationst, targetfilepathst, locating_stringst:string,
   var startposit:int
   var endposit:int  
   
-  
-  case operationst    # concerning lines
-  of "insertions":
-    log("entering insertions..")
-    case line_orientationst
-    of "before":
-      insertionpointit = searchNthSubInString(filecontentst, "\n",
-              1, "backward", positionit) + 1      
-      log("insertionpointit = " & $insertionpointit)
+  try:
+    case operationst    # concerning lines
+    of "insertions":
+      log("performing insertion at (if any..):")
+      case line_orientationst
+      of "before":
+        insertionpointit = searchNthSubInString(filecontentst, "\n",
+                1, "backward", positionit) + 1      
+        log("insertionpointit = " & $insertionpointit)
 
-      for elem in operationparamsq:
-        filecontentst.insert(elem & "\p", insertionpointit)
-        insertionpointit += len(elem) + 1
+        for elem in operationparamsq:
+          filecontentst.insert(elem & "\p", insertionpointit)
+          insertionpointit += len(elem) + len("\p")
 
-    of "on":  # single prepend; does not go to the front!
-      filecontentst.insert(operationparamsq[0], positionit)
-  
-    of "after":
-      insertionpointit = searchNthSubInString(filecontentst, "\n",
-              1, "forward", positionit)
-      log("insertionpointit = " & $insertionpointit)
+      of "on":  # single prepend; does not go to the front!
+        filecontentst.insert(operationparamsq[0], positionit)
+        log("inserted at: " & $positionit)
 
-      for elem in operationparamsq:
-        filecontentst.insert("\p" & elem, insertionpointit)
-        insertionpointit += len(elem) + 1
-    else: discard
+    
+      of "after":
+        insertionpointit = searchNthSubInString(filecontentst, "\n",
+                1, "forward", positionit) + 1
+        log("insertionpointit = " & $insertionpointit)
 
-  of "deletions":
-    log("entering deletions..")
-    var numberoflinesit:int = parseint(operationparamsq[0])
+        for elem in operationparamsq:
+          filecontentst.insert(elem & "\p", insertionpointit)
+          insertionpointit += len(elem) + len("\p")
+      else:
+        echo "Invalid orientation (choose from before, on -or- after)"
 
-    case line_orientationst
-    of "on":
-      #echo "orient = on"
-      startposit = searchNthSubInString(filecontentst, "\n",
-              1, "backward", positionit) + 1      
-      endposit = searchNthSubInString(filecontentst, "\n",
-            numberoflinesit, "forward", positionit)
-      log("startposit and endposit: " & $startposit & "  " & $endposit)
-      filecontentst.delete(startposit..endposit)
+
+    of "deletions":
+      log("performing deletions..")
+      var numberoflinesit:int = parseint(operationparamsq[0])
+
+      case line_orientationst
+      of "on":
+        #echo "orient = on"
+        startposit = searchNthSubInString(filecontentst, "\n",
+                1, "backward", positionit) + 1      
+        endposit = searchNthSubInString(filecontentst, "\n",
+              numberoflinesit, "forward", positionit)
+        log("startposit and endposit: " & $startposit & "  " & $endposit)
+        filecontentst.delete(startposit..endposit)
       
-    of "after":
-      #echo "orient = after"
+      of "after":
+        #echo "orient = after"
+        startposit = searchNthSubInString(filecontentst, "\n",
+              1, "forward", positionit) + 1
+        log("startposit =" & $startposit)
+        endposit = searchNthSubInString(filecontentst, "\n",
+              numberoflinesit + 1, "forward", positionit)
+        log("endposit = " & $endposit)
+        filecontentst.delete(startposit..endposit)
+      
+      of "before":
+        #echo "orient = before"
+        endposit = searchNthSubInString(filecontentst, "\n",
+                1, "backward", positionit)
+        startposit = searchNthSubInString(filecontentst, "\n",
+              numberoflinesit + 1, "backward", positionit) + 1
+        log("startposit and endposit: " & $startposit & "  " & $endposit)
+
+        filecontentst.delete(startposit..endposit)
+
+
+    of "replacement":
+      # replacement allways has orientation: on
+      log("performing replacement..")
+      var currentlinest:string
+      var replacedlinest: string
+      var to_replacest: string = operationparamsq[0]
+      var replace_tost: string = operationparamsq[1]
+    
+    
+      # seek previous line-marker
       startposit = searchNthSubInString(filecontentst, "\n",
-            1, "forward", positionit) + 1
-      log("startposit =" & $startposit)
+              1, "backward", positionit) + 1
+      log("startposit = " & $startposit)
+      
+      # seek next line-marker
       endposit = searchNthSubInString(filecontentst, "\n",
-            numberoflinesit + 1, "forward", positionit)
+              1, "forward", positionit)
       log("endposit = " & $endposit)
+      # copy the current line
+      currentlinest = filecontentst[startposit .. endposit]
+      log("currentlinest = " & currentlinest)
+      # delete the current line
       filecontentst.delete(startposit..endposit)
-    
-    of "before":
-      #echo "orient = before"
-      endposit = searchNthSubInString(filecontentst, "\n",
-              1, "backward", positionit)
-      startposit = searchNthSubInString(filecontentst, "\n",
-            numberoflinesit + 1, "backward", positionit) + 1
-      log("startposit and endposit: " & $startposit & "  " & $endposit)
+      log("to-repl =" & to_replacest)
+      log("rep-to =" & replace_tost)
+      # replace the current line
+      replacedlinest = currentlinest.replace(to_replacest, replace_tost)
+      log("repl.linest = " & replacedlinest)
+      # insert the replaced line
+      filecontentst.insert(replacedlinest, startposit)
+      if currentlinest == replacedlinest:
+        log("NO NET replacements WERE MADE!")
 
-      filecontentst.delete(startposit..endposit)
 
-
-  of "replacement":
-    # replacement allways has orientation: on
-    log("entering replacement..")
-    var currentlinest:string
-    var replacedlinest: string
-    var to_replacest: string = operationparamsq[0]
-    var replace_tost: string = operationparamsq[1]
+  except IOError:
+    echo "IO error!"
   
+  except RangeDefect:
+    echo "\p\p+++++++ search-config not found +++++++++++\p"
+    echo "You have probably entered a search-config that could not be found. \p" &
+        "Re-examine you search-config. \p" &
+        "The problem originated probably in the above EDIT FILE-block"
+    let errob = getCurrentException()
+    echo "\p******* Technical error-information ******* \p" 
+    echo repr(errob) & "\p****End exception****\p"
   
-    # seek previous line-marker
-    startposit = searchNthSubInString(filecontentst, "\n",
-            1, "backward", positionit) + 1
-    log("startposit = " & $startposit)
-    
-    # seek next line-marker
-    endposit = searchNthSubInString(filecontentst, "\n",
-            1, "forward", positionit)
-    log("endposit = " & $endposit)
-    # copy the current line
-    currentlinest = filecontentst[startposit .. endposit]
-    log("currentlinest = " & currentlinest)
-    # delete the current line
-    filecontentst.delete(startposit..endposit)
-    log("to-repl =" & to_replacest)
-    log("rep-to =" & replace_tost)
-    # replace the current line
-    replacedlinest = currentlinest.replace(to_replacest, replace_tost)
-    log("repl.linest = " & replacedlinest)
-    # insert the replaced line
-    filecontentst.insert(replacedlinest, startposit)
-
+  except:
+    let errob = getCurrentException()
+    echo "\p******* Unanticipated error ******* \p" 
+    echo repr(errob) & "\p****End exception****\p"
+      
+  # finally:
+    #echo filecontentst
+    # writeFile(targetfilepathst, filecontentst)
 
   #echo filecontentst
-  
   writeFile(targetfilepathst, filecontentst)
-
 
 # echo "jo_file_ops " & $(versionfl) & " is called..."
 
@@ -295,7 +324,7 @@ when isMainModule:
 
   # myWalkDir(getAppDir())
 
-  copyDirWithStem("/home/bruik/testing/testdoel1", "/home/bruik/testing/doel")
+  # copyDirWithStem("/home/bruik/testing/testdoel1", "/home/bruik/testing/doel")
 
   # echo getValueFromKey(@["jan-pieters", "wim-jansen"], "-", "janus")
 
@@ -310,24 +339,28 @@ when isMainModule:
 
 #echo getValueFromKey(@["arg1;;aap", "arg2;;noot", "arg3;;mies"], ";;","arg2")
 
-#insertTextInFile("some_config.txt", "before", "hieronder",
-          #1, "backward", @["aap","noot","mies"])
-#
-#
-#echo "\n=====Gelukt====="
-
 #operationst, targetfilepathst, locating_stringst:string, 
           #directionst:string, occurit: int,
           #line_orientationst: string, operationparamsq:seq[string]
 
-#alterTextFile("insertions", "some_config.txt", "opdracht", 
-          #"forward", 2, "on", @["winstgevende "])
+   #alterTextFile("insertions", "some_config.txt", "opdracht", 
+   #          "forward", 2, "on", @["winstgevende "])
 
-#alterTextFile("deletions", "some_config.txt", "winst", 
-          #"forward", 1, "before", @["3"])
+   #alterTextFile("insertions", "some_config.txt", "opdracht", 
+   #          "forward", 1, "after", @["aap", "noot", "mies"])
 
-#alterTextFile("deletions", "some_config.txt", "12", 
-          #"forward", 1, "on", @["2"])
+   #alterTextFile("insertions", "some_config.txt", "opdracht", 
+   #          "forward", 1, "before", @["aap", "noot", "mies"])
 
-#alterTextFile("replacement", "some_config.txt", "opdracht", 
-          #"forward", 2, "on", @["de","een"])
+   #alterTextFile("deletions", "some_config.txt", "opdracht", 
+   #          "forward", 1, "before", @["2"])
+
+   #alterTextFile("deletions", "some_config.txt", "12", 
+   #          "forward", 1, "on", @["1"])
+
+   #alterTextFile("deletions", "some_config.txt", "opdracht", 
+   #          "forward", 1, "after", @["2"])
+
+
+  alterTextFile("replacement", "some_config.txt", "opdracht", 
+            "forward", 1, "on", @["de","een"])

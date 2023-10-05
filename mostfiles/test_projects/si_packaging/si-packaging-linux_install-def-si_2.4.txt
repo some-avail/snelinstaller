@@ -19,7 +19,7 @@ Writes currently to a home-dir-path
 VARIABLES TO SET
 comment: defaultly call enclosed in # like #var#
 arguments---separator=#
-version=2.41
+version=2.42
 target=/home/bruik/toep_gegs/snelinstaller/packages_si/snelinstaller_#version#_linux
 archive=/home/bruik/toep_gegs/snelinstaller/packages_si/snelinstaller_#version#_linux.tar.gz
 dirbasename=snelinstaller_#version#_linux

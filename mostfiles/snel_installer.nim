@@ -49,7 +49,7 @@
 
 
 var 
-  versionfl:float = 2.41
+  versionfl:float = 2.43
   ask_confirmationbo: bool = true
 
   arg_def_filest: string
@@ -420,19 +420,6 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
     except IOError:
       echo "IO error!"
     
-    except RangeDefect:
-      echo "\p\p+++++++ search-config not found +++++++++++\p"
-      echo "You have probably entered a search-config that could not be found. \p" &
-          "Re-examine you search-config. \p" &
-          "The problem originated probably in the above EDIT FILE-block"
-      let errob = getCurrentException()
-      echo "\p******* Technical error-information ******* \p" 
-      echo "block-phase: " & blockphasest & "\p"
-      echo "Last def-file-line read: " & lastline & "\p"
-      echo "Occured at def-line-nr: ", $lineit
-      echo repr(errob) & "\p****End exception****\p"
-
-    
     except:
       let errob = getCurrentException()
       echo "\p******* Unanticipated error ******* \p" 
@@ -467,9 +454,12 @@ proc loadCommandLineArgs() =
     case optob.kind
     of cmdEnd:
       if passit == 0:
+        echo "\n==============================="
+        echo "Program Snel_Installer " & $(versionfl) & " is running..."             
         echo "\pYou did not append an install-definition-file as argument!"
         echo "Please provide one."
         echo "Quiting..."
+        quit(QuitSuccess)
       break
 
     of cmdArgument:
@@ -504,7 +494,7 @@ var for_realbo: bool = true
 
 
 if for_realbo:   # run the actual program
-  
+
   loadCommandLineArgs()
   if arg_levelit > 0: ask_confirmationbo = false
   if confirmInstall(ask_confirmationbo):
