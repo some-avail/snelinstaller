@@ -8,12 +8,6 @@ x
 5
 4
 Here is the search-string which holds the newtext and more
-command4
-command1
-command2
-command3
-command4
-command4
 5
 6
 something else

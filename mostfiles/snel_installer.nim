@@ -49,7 +49,7 @@
 
 
 var 
-  versionfl:float = 2.43
+  versionfl:float = 2.45
   ask_confirmationbo: bool = true
 
   arg_def_filest: string
@@ -321,14 +321,24 @@ proc installFromDef(install_def_filest: string, call_levelit: int = 0): bool =
                   echo "Copying branch: ", sourcedirpathst, " to: ", targetdirpathst
 
               else:
-                if not copybranchbo:
+                if copybranchbo:
+                  # here multiple source-dirs to be copied
+                  sourcedirpathst = expandTilde(linest)
+                  copyDirWithStem(sourcedirpathst, targetdirpathst, samplepermissionsbo)
+                  echo "Copying branch: ", sourcedirpathst, " to: ", targetdirpathst
+
+                else:
+                  # with file-copy we are expecting only one reusable source-dir-path
                   sourcefilest = linest
                   sourcefilepathst = joinPath(sourcedirpathst, sourcefilest)                
                   echo "copying: " & sourcefilepathst & "   to:   " & targetdirpathst
                   targetfilepathst = joinPath(targetdirpathst, sourcefilest)
                   if dirExists(targetdirpathst):
                     if fileExists(sourcefilepathst):
-                      copyfile(sourcefilepathst,targetfilepathst)
+                      if samplepermissionsbo:
+                        copyFileWithPermissions(sourcefilepathst,targetfilepathst)
+                      else:
+                        copyFile(sourcefilepathst,targetfilepathst)
                       if linux_setexebo:
                         var prependst:string = ""
                         if linux_use_sudobo: prependst = "sudo "

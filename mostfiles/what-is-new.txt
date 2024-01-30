@@ -4,4 +4,7 @@ What is new in snel_installer version:
 -nested variables; you can create a var within a var
   > very usefull for e.g. a version-string that is used in multiple paths
 -reporting of non-used vars
-
+-improved reporting of the edit-phase
+-now production-ready for windows (>= 2.43)
+-with arg copy_branch now multiple source-dirs can be copied to the same target (>= 2.44)
+-sample_permissions can now be used with simple file-copy (as opposed to only with copybranch, with which it was allready possible) (>= 2.45)

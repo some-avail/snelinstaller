@@ -1,4 +1,16 @@
-Manual of Snel_installer - version 2.3
+Manual of Snel_installer - version 2.45
+
+
+PREPARE FOR USAGE
+
+-Go to the project for which you want to use SnelInstaller.
+-Create a sub-folder called snelinstaller_defs
+-Copy you latest created def or the latest sample from the SI-website.
+-Rename it like yourproject_a.b_destination_snelinstaller_x.y.txt
+-Use the latest compilate like for example snelinstaller_2.4
+(as a nim-developper one may compile it from snel_installer.nim)
+-Adjust the definition to your situation.
+-Test it (see below).
 
 
 HOW TU USE SnelInstaller
@@ -17,10 +29,16 @@ the install-definiton-file. While reading this manual
 take a regular look at the sample: basic-sample-01_install-def-si_2.3.txt
 
 Allthough above a generic name is used for ease of use, 
-the following name-format is recommended:
-YourProject_install-def-si_x.y.txt
-where x.y stands for the version of the executable 
-snel_installer (linux) or snel_installer.exe (future windows).
+the latestly recommended name-format is:
+yourproject_a.b_destination_snelinstaller_x.y.txt
+where a.b stands for the version of your project,
+x.y stands for the version of the executable of snelinstaller
+[snel_installer (linux) or snel_installer.exe (windows)],
+and destination can be things like:
+for_linux, for_win10plus, for_preparation, to_path_huppelepup etc.
+
+
+INNER FORMAT
 
 About the inner format of the installation-definition-file (def-file):
 it contains multiple blocks with specific tasks.
@@ -58,7 +76,8 @@ the variable-separator (see below)
 linux_set_exe=1			  enable executable bits for executable files in linux
 linux_use_sudo=1		  use linux-admin rights (but then call also like: sudo snel_installer)
 copy_branch=1         copy a entire branch recursively
-sample_permissions=1  take the perms over from the source-branch (with branch-copy)
+sample_permissions=1  take the perms over from the source-branch (with branch-copy, 
+and >=2.45 for all copying possible)
 
 
 The following lines are different for each block.
@@ -76,30 +95,41 @@ In defining paths, it is always important to remember where the program
 snel_installer(.exe) is located, because all paths depend on it. From the location 
 of the program forward it usually is best to use relative paths for all other files.
 
+
 The block "EDIT FILE (ADD, DELETE, REPLACE LINES)" has three possible
 operations: inserting lines, deleting lines and replacing a single line.
 The operations are performed on one or more lines that are located by 
-the variables target-file, search-direction, occurrence, locating-string and 
-line-orientation (before, after or on). The latter indicates the orientation
-of the operation relative to the located line.
+the variables target-file, search-direction, locating-string and occurrence. 
+These variables result in a find (file-character-position (FCP) >=0) or not (pos. = -1).
+
+Allthough an FCP is searched for, all operations (EXCEPT insertion-on) need just 
+to identify the sentence uniquely, that is the FCP must be somewhere within 
+the sentence. 
+
+The var line-orientation (before, after or on the current line) indicates the 
+orientation of the operation relative to the located line.
 The insertions-operation can also add empty lines. The 
-replacement-operation can only work ON the located line. The line that is 
-searched is unique together the occurrence of the 
-search-string. For the locating of the search-needy sentence it is 
-possible to use a (unique) front-part of the sentence as search-string.
-(instead of the entire sentence).
+replacement-operation can only work ON the located line. 
+
 If your search-config is faulty and does not deliver a 
 located line, SI will give you an error. (e.g. if you ask for the 4th
 occurence of a search-string and there are only two occurrences.)
 
+The only operation-combo for which the exact character-position is 
+relevant (as opposed the correct sentence) is "insertion-on" for which 
+the insertion happens exactly at the found file-character-position.
+
+
 The before-last block is EXECUTE SHELL-COMMANDS.
 Any arbitrary linux-command can be executed here.
+
 
 The block "CALL OTHER INSTALLATIONS" is added in SI 2.3 and enables the 
 calling of subordinate installations / def-files. Multiple install-defs 
 can be called, whereby each one can call another one, creating the possibility 
 of quite flexible installations. In defining the path of the defs 
 one must reckon with the location of the executable.
+
 
 Below is a description of the definition which explains how 
 to fill in the lines and what the installer expects.
